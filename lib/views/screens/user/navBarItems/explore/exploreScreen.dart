@@ -1,117 +1,122 @@
+import 'package:brand/view_model/Controller/userSideController.dart/exploreScreenController.dart';
+import 'package:brand/view_model/Controller/companySideController/comproductDetailController.dart';
+import 'package:brand/views/widget/animatedContainer.dart';
 import 'package:brand/barrelView/barrelView.dart';
-import 'package:brand/view_model/repository/userSideController.dart/exploreController.dart';
-import 'package:brand/views/widget/customFadeAnimation.dart';
 
-class Explorescreen extends StatelessWidget {
-  const Explorescreen({super.key});
+class ExploreScreen extends StatefulWidget {
+  const ExploreScreen({super.key});
+
+  @override
+  _ExploreScreenState createState() => _ExploreScreenState();
+}
+
+class _ExploreScreenState extends State<ExploreScreen>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _fadeAnimation;
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1000),
+    );
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
+    _animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final profileScreenController =
-        Provider.of<Profilescreencontroller>(context);
-    final exploreController = Provider.of<ExploreScreenController>(context);
-    final height = MediaQuery.of(context).size.height;
-    final width = MediaQuery.of(context).size.width;
+    final productController = Provider.of<ComProductDetailController>(context);
 
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Colors.grey.shade100,
-        body: Column(
-          children: [
-            // Custom Search Bar
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: CustomSearchbar(
-                suffixicon: const Icon(Icons.search, color: Colors.grey),
-                prefixicon: const Icon(Icons.explore, color: Colors.blue),
-                borderradius: 20,
-                hintText: 'Search for a brand',
-                onChanged: (query) {
-                  exploreController.filterBrands(query);
-                },
-              ),
-            ),
-            SizedBox(height: height * 0.02),
+    return Consumer<ExploreScreenController>(
+      builder: (context, exploreController, child) {
+        final height = MediaQuery.of(context).size.height;
+        // final width = MediaQuery.of(context).size.width;
 
-            // Grid View Section
-            Expanded(
-              child: GridView.builder(
-                padding: EdgeInsets.symmetric(horizontal: width * 0.04),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: width * 0.04,
-                  mainAxisSpacing: height * 0.02,
-                  childAspectRatio: 0.75,
-                ),
-                itemCount: exploreController.filteredBrands.length,
-                itemBuilder: (context, index) {
-                  final brandName = exploreController.filteredBrands[index];
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.pushNamed(context, RoutesName.productScreen);
+        return Scaffold(
+          backgroundColor: Colors.blueGrey.shade50,
+          body: Column(
+            children: [
+              SizedBox(height: height * 0.05),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: CustomSearchbar(
+                  controller: _searchController,
+                  onChanged: (query) {
+                    exploreController.searchProducts(query);
+                  },
+                  borderradius: 10,
+                  hintText: 'Search product or brand',
+                  prefixicon: const Icon(Icons.search),
+                  suffixicon: IconButton(
+                    icon: const Icon(Icons.clear),
+                    onPressed: () {
+                      _searchController.clear();
+                      exploreController.searchProducts('');
                     },
-                    child: FadeIn(
-                      delay: Duration(milliseconds: 200 + (index * 100)),
-                      child: Stack(
-                        children: [
-                          // Full Image with Rounded Corners
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(16),
-                            child: profileScreenController.selectedImage != null
-                                ? Image.file(
-                                    profileScreenController.selectedImage!,
-                                    height: double.infinity,
-                                    width: double.infinity,
-                                    fit: BoxFit.cover,
-                                  )
-                                : Container(
-                                    color: Colors.blue.shade100,
-                                    child: const Icon(
-                                      Icons.business,
-                                      size: 60,
-                                      color: Colors.blue,
-                                    ),
-                                  ),
-                          ),
-
-                          // Brand Name Overlay at the Bottom
-                          Positioned(
-                            bottom: 0,
-                            left: 0,
-                            right: 0,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.black.withOpacity(0.6),
-                                borderRadius: const BorderRadius.vertical(
-                                  bottom: Radius.circular(16),
-                                ),
-                              ),
-                              padding: EdgeInsets.symmetric(
-                                vertical: height * 0.01,
-                              ),
-                              child: Text(
-                                brandName,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: height * 0.02,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.white,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
+                  ),
+                ),
               ),
-            ),
-          ],
-        ),
-      ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: FadeTransition(
+                    opacity: _fadeAnimation,
+                    child: GridView.builder(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 16.0,
+                        mainAxisSpacing: 24.0,
+                        childAspectRatio: 0.65,
+                      ),
+                      itemCount: exploreController.companies.length,
+                      itemBuilder: (context, index) {
+                        final company = exploreController.companies[index];
+                        return InkWell(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Productscreen(
+                                          product: CompanyProductUserSide(
+                                              name: 'name',
+                                              imageUrl:
+                                                  'https://picsum.photos/200/300?random=1',
+                                              images: [],
+                                              colors: [],
+                                              price: '1345',
+                                              description: 'description'),
+                                        )));
+                          },
+                          child: AnimatedCompanyCard(
+                            index: index,
+                            productController: productController,
+                            company: company,
+                            product: null,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

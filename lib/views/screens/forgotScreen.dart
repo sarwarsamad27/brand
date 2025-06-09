@@ -22,6 +22,7 @@ class ForgotScreen extends StatelessWidget {
 
     return SafeArea(
       child: Scaffold(
+        backgroundColor: AppColor.appbackgroundcolor,
         body: LayoutBuilder(
           builder: (context, constraints) {
             return SingleChildScrollView(
@@ -75,6 +76,7 @@ class ForgotScreen extends StatelessWidget {
                                 0.05, // 5% of screen width for icon size
                             child: const Icon(
                               Icons.message_outlined,
+                              color: AppColor.appimagecolor,
                             )),
                       ),
                       borderColor: AppColor.textSecondaryColor,
@@ -99,7 +101,7 @@ class ForgotScreen extends StatelessWidget {
                         fontSize: AppFontSizes.font16,
                         fontWeight: FontWeight.w600,
                       ),
-                      bgColor: AppColor.primaryColor,
+                      bgColor: AppColor.appimagecolor,
                     ),
                   ],
                 ),

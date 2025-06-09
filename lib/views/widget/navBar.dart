@@ -20,7 +20,7 @@ class CurvedNavigationBar extends StatefulWidget {
     super.key,
     required this.items,
     this.index = 0,
-    this.color = Colors.white,
+    this.color = AppColor.appimagecolor,
     this.buttonBackgroundColor,
     this.backgroundColor = Colors.blueAccent,
     this.onTap,
@@ -91,7 +91,7 @@ class CurvedNavigationBarState extends State<CurvedNavigationBar>
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Container(
-      color: widget.backgroundColor,
+      color: AppColor.appbackgroundcolor,
       height: widget.height,
       child: Stack(
         clipBehavior: Clip.none,
@@ -113,7 +113,7 @@ class CurvedNavigationBarState extends State<CurvedNavigationBar>
                   -(1 - _buttonHide) * 80,
                 ),
                 child: Material(
-                  color: widget.buttonBackgroundColor ?? widget.color,
+                  color: AppColor.appimagecolor,
                   type: MaterialType.circle,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),

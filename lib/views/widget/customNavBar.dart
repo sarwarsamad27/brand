@@ -23,7 +23,7 @@ class CustomNavBar extends StatelessWidget {
         ),
         child: Stack(children: [
           BottomNavigationBar(
-            backgroundColor: AppColor.textWhite200Color,
+            backgroundColor: AppColor.appimagecolor,
             currentIndex: currentIndex,
             items: bottomNavigationBarItem,
             onTap: onTap,
@@ -31,7 +31,7 @@ class CustomNavBar extends StatelessWidget {
               color: AppColor.textSecondaryColor,
               fontWeight: FontWeight.bold,
             ),
-            selectedItemColor: AppColor.primaryColor,
+            selectedItemColor: AppColor.appimagecolor,
             type: BottomNavigationBarType.fixed,
           ),
           _buildProgressBar(context, currentIndex)
@@ -47,7 +47,7 @@ class CustomNavBar extends StatelessWidget {
       left: iconWidth * currentIndex + (iconWidth - progressBarWidth) / 2,
       child: Container(
         decoration: const BoxDecoration(
-            color: AppColor.primaryColor,
+            color: AppColor.appimagecolor,
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(5), topRight: Radius.circular(5))),
         width: progressBarWidth,

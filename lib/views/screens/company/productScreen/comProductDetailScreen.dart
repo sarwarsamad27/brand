@@ -1,7 +1,8 @@
 import 'package:brand/barrelView/barrelView.dart';
+import 'package:brand/view_model/Controller/companySideController/comproductDetailController.dart';
 
 class ProductDetailScreen extends StatelessWidget {
-  final CompanyProduct product;
+  final CompanyProducts product;
 
   ProductDetailScreen({required this.product});
 
@@ -162,7 +163,7 @@ class ProductDetailScreen extends StatelessWidget {
   }
 
   // Method to handle product editing
-  void _editProduct(BuildContext context, CompanyProduct product,
+  void _editProduct(BuildContext context, CompanyProducts product,
       ProductController productController) {
     final nameController = TextEditingController(text: product.name);
     final descriptionController =
@@ -226,18 +227,18 @@ class ProductDetailScreen extends StatelessWidget {
             ),
             TextButton(
               onPressed: () {
-                productController.updateProduct(
-                  product.copyWith(
-                    name: nameController.text,
-                    description: descriptionController.text,
-                    price:
-                        double.tryParse(priceController.text) ?? product.price,
-                    stock: int.tryParse(stockController.text) ?? product.stock,
-                    discountPrice: discountController.text.isNotEmpty
-                        ? double.tryParse(discountController.text)
-                        : null,
-                  ),
-                );
+                // productController.updateProduct(
+                //   product.copyWith(
+                //     name: nameController.text,
+                //     description: descriptionController.text,
+                //     price:
+                //         double.tryParse(priceController.text) ?? product.price,
+                //     stock: int.tryParse(stockController.text) ?? product.stock,
+                //     discountPrice: discountController.text.isNotEmpty
+                //         ? double.tryParse(discountController.text)
+                //         : null,
+                //   ),
+                // );
                 Navigator.pop(context); // Close the dialog after saving
               },
               child: const Text("Update"),
@@ -249,7 +250,7 @@ class ProductDetailScreen extends StatelessWidget {
   }
 
   // Method to handle product deletion
-  void _deleteProduct(BuildContext context, CompanyProduct product,
+  void _deleteProduct(BuildContext context, CompanyProducts product,
       ProductController productController) {
     showDialog(
       context: context,

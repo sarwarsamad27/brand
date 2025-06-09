@@ -1,36 +1,21 @@
-// class CompanyProduct {
-//   final String id;
-//   final String name;
-//   final String description;
-//   final double price;
-//   final String imageUrl;
-//   final int stock;
-
-//   CompanyProduct({
-//     required this.id,
-//     required this.name,
-//     required this.description,
-//     required this.price,
-//     required this.imageUrl,
-//     required this.stock,
-//   });
-// }
-
-class CompanyProduct {
+class CompanyProducts {
   final String id;
   final String name;
   final String description;
   final String category;
   final double price;
   final int stock;
+  int quantity;
+
   final double? discountPrice;
   final List<String> images;
   final List<String> sizes;
   final List<String> colors;
 
-  CompanyProduct({
+  CompanyProducts({
     required this.id,
     required this.name,
+    required this.quantity,
     required this.description,
     required this.category,
     required this.price,
@@ -42,21 +27,23 @@ class CompanyProduct {
   });
 
   // The copyWith method
-  CompanyProduct copyWith({
+  CompanyProducts copyWith({
     String? id,
     String? name,
     String? description,
     String? category,
     double? price,
     int? stock,
+    int? quantity,
     double? discountPrice,
     List<String>? images,
     List<String>? sizes,
     List<String>? colors,
   }) {
-    return CompanyProduct(
+    return CompanyProducts(
       id: id ?? this.id,
       name: name ?? this.name,
+      quantity: quantity ?? this.quantity,
       description: description ?? this.description,
       category: category ?? this.category,
       price: price ?? this.price,

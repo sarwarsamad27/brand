@@ -37,6 +37,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   provider: ^6.1.2
   get: ^4.6.6
+  flutter_launcher_icons: "^0.14.3"
   modal_progress_hud_nsn: ^0.5.1
   http: ^1.2.2
   animated_text_kit: ^4.2.2
@@ -49,14 +50,30 @@ dependencies:
   image_picker: ^1.1.2
   flutter_svg: ^2.0.16
   smooth_page_indicator: ^1.2.0+3
-  audioplayers: ^6.1.0
+  audioplayers: 
   photo_view: ^0.15.0
+  font_awesome_flutter: ^10.8.0
+  flutter_animate: ^4.5.2
+  fl_chart: ^0.68.0
+  google_sign_in:
+  # firebase_core: ^3.12.1
+  # firebase_auth: ^5.5.1
+ 
+  flutter_tts: ^4.2.2
+  flash: ^3.1.1
+  flutter_config: ^2.0.2
+  flashy_flushbar: ^1.4.0
   
   
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/imageIcon.png"
+  min_sdk_android: 21 # 
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -79,6 +96,8 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/AppIcons/
+    - assets/images/
+    - assets/images/icons/
     # - assets/sounds/click.mp3
   #   - images/a_dot_ham.jpeg
 

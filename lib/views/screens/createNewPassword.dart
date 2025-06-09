@@ -20,14 +20,14 @@ class UpdateNewPassword extends StatelessWidget {
     double verticalPadding = screenHeight * 0.02; // 2% vertical padding
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(),
+        backgroundColor: AppColor.appbackgroundcolor,
         body: LayoutBuilder(
           builder: (context, constraints) {
             return SingleChildScrollView(
               child: Padding(
                 padding: EdgeInsets.symmetric(
-                  horizontal: horizontalPadding, // Dynamic horizontal padding
-                  vertical: verticalPadding, // Dynamic vertical padding
+                  horizontal: horizontalPadding,
+                  vertical: verticalPadding,
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -68,7 +68,10 @@ class UpdateNewPassword extends StatelessWidget {
                         child: SizedBox(
                             width: screenWidth * 0.05, // Dynamic icon size
                             height: screenWidth * 0.05, // Dynamic icon size
-                            child: const Icon(Icons.lock)),
+                            child: const Icon(
+                              Icons.lock,
+                              color: AppColor.appimagecolor,
+                            )),
                       ),
                       suffixIcon: IconButton(
                         onPressed: createNewPassRepo.passObsecureText,
@@ -76,10 +79,11 @@ class UpdateNewPassword extends StatelessWidget {
                           createNewPassRepo.passIsObsecure
                               ? Assets.eye
                               : Assets.hideEye,
+                          color: AppColor.appimagecolor,
                           height: screenWidth * 0.05, // Dynamic icon size
                           width: screenWidth * 0.05, // Dynamic icon size
                         ),
-                        color: AppColor.primaryColor,
+                        color: AppColor.appimagecolor,
                       ),
                       borderColor: AppColor.textSecondaryColor,
                       borderRadius: AppBorderRadius.radius5,
@@ -97,7 +101,10 @@ class UpdateNewPassword extends StatelessWidget {
                         child: SizedBox(
                             width: screenWidth * 0.05, // Dynamic icon size
                             height: screenWidth * 0.05, // Dynamic icon size
-                            child: const Icon(Icons.lock)),
+                            child: const Icon(
+                              Icons.lock,
+                              color: AppColor.appimagecolor,
+                            )),
                       ),
                       suffixIcon: IconButton(
                         onPressed: createNewPassRepo.confirmPassObsecure,
@@ -105,10 +112,11 @@ class UpdateNewPassword extends StatelessWidget {
                           createNewPassRepo.confirmPassIsObsecure
                               ? Assets.eye
                               : Assets.hideEye,
+                          color: AppColor.appimagecolor,
                           width: screenWidth * 0.05, // Dynamic icon size
                           height: screenWidth * 0.05, // Dynamic icon size
                         ),
-                        color: AppColor.primaryColor,
+                        color: AppColor.appimagecolor,
                       ),
                       borderColor: AppColor.textSecondaryColor,
                       borderRadius: AppBorderRadius.radius5,
@@ -121,7 +129,7 @@ class UpdateNewPassword extends StatelessWidget {
                       onTap: () {
                         Navigator.pushNamed(
                           context,
-                          RoutesName.loginScreen,
+                          RoutesName.userloginScreen,
                         );
                       },
                       title: 'update',
@@ -130,7 +138,7 @@ class UpdateNewPassword extends StatelessWidget {
                         fontSize: AppFontSizes.font16,
                         fontWeight: AppFontWeight.w600,
                       ),
-                      bgColor: AppColor.primaryColor,
+                      bgColor: AppColor.appimagecolor,
                     ),
                   ],
                 ),

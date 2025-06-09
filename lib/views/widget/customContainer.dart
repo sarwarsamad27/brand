@@ -31,13 +31,15 @@ class CustomContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final heights = MediaQuery.of(context).size.height * 1;
+    final widths = MediaQuery.of(context).size.width * 1;
     return InkWell(
       onTap: onTap,
       child: Container(
-        height: height,
-        width: width,
+        height: height ?? heights * .07,
+        width: width ?? widths,
         decoration: BoxDecoration(
-          borderRadius: borderRadius,
+          borderRadius: borderRadius ?? BorderRadius.circular(10),
           color: bgColor,
         ),
         child: child ??

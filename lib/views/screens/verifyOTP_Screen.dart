@@ -22,7 +22,7 @@ class VerifyYourOTPScreen extends StatelessWidget {
 
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(),
+        backgroundColor: AppColor.appbackgroundcolor,
         body: LayoutBuilder(
           builder: (context, constraints) {
             return SingleChildScrollView(
@@ -69,7 +69,10 @@ class VerifyYourOTPScreen extends StatelessWidget {
                         child: SizedBox(
                             width: screenWidth * 0.05, // Dynamic icon size
                             height: screenWidth * 0.05, // Dynamic icon size
-                            child: const Icon(Icons.lock)),
+                            child: const Icon(
+                              Icons.lock,
+                              color: AppColor.appimagecolor,
+                            )),
                       ),
                       suffixIcon: IconButton(
                         onPressed: verifyYourIdentityViewModel.passObsecureText,
@@ -77,6 +80,7 @@ class VerifyYourOTPScreen extends StatelessWidget {
                           verifyYourIdentityViewModel.passIsObsecure
                               ? Assets.eye
                               : Assets.hideEye,
+                          color: AppColor.appimagecolor,
                           height: screenWidth * 0.06, // Dynamic icon size
                           width: screenWidth * 0.06, // Dynamic icon size
                         ),
@@ -102,7 +106,7 @@ class VerifyYourOTPScreen extends StatelessWidget {
                         fontSize: AppFontSizes.font15,
                         fontWeight: AppFontWeight.w500,
                       ),
-                      bgColor: AppColor.primaryColor,
+                      bgColor: AppColor.appimagecolor,
                     ),
                   ],
                 ),

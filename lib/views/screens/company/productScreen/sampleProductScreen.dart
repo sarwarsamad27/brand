@@ -3,7 +3,7 @@ import 'package:brand/views/screens/company/productScreen/comProductScreen.dart'
 import 'package:brand/views/widget/customSearchBar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:brand/view_model/repository/companySideController/sampleProductController.dart';
+import 'package:brand/view_model/Controller/companySideController/sampleProductController.dart';
 import 'package:brand/generate/companySideMiodels/sampleProductModel.dart';
 import 'package:brand/views/screens/company/productScreen/sampleProductFormScreen.dart';
 

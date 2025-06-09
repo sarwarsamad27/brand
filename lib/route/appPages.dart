@@ -1,25 +1,34 @@
 import 'package:brand/barrelView/barrelView.dart';
+import 'package:brand/views/screens/company/comloginScreen.dart';
+import 'package:brand/views/screens/company/compSIdeStart.dart';
+import 'package:brand/views/screens/company/profileScreen/comFormScreen.dart';
+import 'package:brand/views/screens/company/signInCompanyScreen.dart';
+import 'package:brand/views/screens/user/userFormScreen.dart';
 
 class AppPages {
   static Map<String, WidgetBuilder> getRoutes() {
     return {
       RoutesName.splashScreen: (context) => const Splashscreen(),
       RoutesName.homeScreen: (context) => const Homescreen(),
-      RoutesName.loginScreen: (context) => const Loginscreen(),
-      RoutesName.signInScreen: (context) => const SignInScreen(),
+      RoutesName.userloginScreen: (context) => const Loginscreen(),
+      RoutesName.usersignInScreen: (context) => const SignInUserScreen(),
       RoutesName.forgotScreen: (context) => const ForgotScreen(),
       RoutesName.verifyYourOTPScreen: (context) => const VerifyYourOTPScreen(),
       RoutesName.updateNewPassword: (context) => const UpdateNewPassword(),
-      RoutesName.productScreen: (context) => Productscreen(),
-      RoutesName.paymentScreen: (context) => PaymentScreen(),
+      // RoutesName.productScreen: (context) => Productscreen(),
+      RoutesName.paymentScreen: (context) => const PaymentScreen(),
       RoutesName.messageScreen: (context) => const MessageScreen(),
       RoutesName.termAndConditionScreen: (context) =>
           const Termandconditionscreen(),
       RoutesName.searchScreen: (context) => const Searchscreen(),
-      RoutesName.exploreScreen: (context) => const Explorescreen(),
+      RoutesName.exploreScreen: (context) => ExploreScreen(),
       RoutesName.onBoardScreen: (context) => Onboardscreen(),
-      RoutesName.selectedProductScreen: (context) => SelectedProductScreen(),
-      RoutesName.compHomeScreen: (context) => CompanyHomeScreen(),
+      RoutesName.comFormScreen: (context) => ComFormScreen(),
+      RoutesName.compHomeScreen: (context) => const CompanyHomeScreen(),
+      RoutesName.comSideStartScreen: (context) => const ComSideStartScreen(),
+      RoutesName.signinCompanyScreen: (context) => const SigninCompanyScreen(),
+      RoutesName.comLogInScreen: (context) => const Comloginscreen(),
+      RoutesName.userFormScreen: (context) => const UserFormScreen(),
     };
   }
 }

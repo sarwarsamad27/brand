@@ -79,7 +79,7 @@ class CustomLogoutAlert extends StatelessWidget {
                   // onTap: logoutRepo.logout,
                   onTap: () {
                     logoutRepo.logout();
-                    Navigator.pushNamed(context, RoutesName.loginScreen);
+                    Navigator.pushNamed(context, RoutesName.userloginScreen);
                   },
                   child: Container(
                     height: 38,

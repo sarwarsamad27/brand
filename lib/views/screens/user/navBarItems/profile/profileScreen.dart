@@ -1,249 +1,152 @@
 import 'package:brand/barrelView/barrelView.dart';
-import 'package:brand/view_model/repository/userSideController.dart/themeController.dart';
 import 'package:brand/views/screens/user/navBarItems/profile/address/address.dart';
+import 'package:brand/views/widget/customAppbar.dart';
+import 'package:brand/views/widget/customContainerAnimation.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final profileScreenController =
-        Provider.of<Profilescreencontroller>(context);
     final themeManager = Provider.of<ThemeManager>(context);
+    final userFormController = Provider.of<ProfileScreenController>(context);
     final logoutRepo = Provider.of<LogoutRepository>(context);
-    final height = MediaQuery.of(context).size.height * 1;
-    final width = MediaQuery.of(context).size.width * 1;
-    return SafeArea(
-        child: Scaffold(
-            body: Stack(
-      children: [
-        Column(children: [
-          CustomContainer(
-              height: height * .14,
-              width: width * .3,
-              borderColor: AppColor.primaryColor,
-              onTap: () {
-                profileScreenController.captureImageFromCamera();
-              },
-              child: ClipOval(
-                  child: profileScreenController.selectedImage != null
-                      ? Image.file(
-                          profileScreenController.selectedImage!,
-                          fit: BoxFit.fill,
-                        )
-                      : const Icon(Icons.person))),
-          SizedBox(
-            height: height * .035,
-          ),
-          Text(
-            'Sarwar samad',
-            style: TextStyle(fontSize: height * .035),
-          ),
-          SizedBox(
-            height: height * .04,
-          ),
-          CustomContainer(
-            width: width * 1,
-            height: height * .05,
-            bgColor: AppColor.dialogBgColor,
-            onTap: () {
-              Navigator.pushNamed(context, RoutesName.messageScreen);
-            },
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: width * .03),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  const Icon(Icons.message),
-                  SizedBox(
-                    width: width * .01,
-                  ),
-                  const Text('Messages'),
-                  SizedBox(
-                    width: width * .58,
-                  ),
-                  SvgPicture.asset(
-                    Assets.arrowForward,
-                    color: Colors.black,
-                    height: height * .017,
-                  )
-                ],
+
+    final double height = MediaQuery.of(context).size.height;
+    final double width = MediaQuery.of(context).size.width;
+
+    return Scaffold(
+      backgroundColor: AppColor.appbackgroundcolor,
+      appBar:
+          modernAppBar(context, name: 'Profile', detail: 'Check your profile'),
+      body: ScaleFadeAnimation(
+        delay: 2,
+        child: Stack(
+          children: [
+            Positioned.fill(
+              top: 10,
+              left: 10,
+              right: 10,
+              bottom: height * .63,
+              child: Image.asset(
+                'assets/images/imageIcon.webp',
+                fit: BoxFit.cover,
               ),
             ),
-          ),
-          SizedBox(
-            height: height * .03,
-          ),
-          CustomContainer(
-            width: width * 1,
-            height: height * .05,
-            bgColor: AppColor.dialogBgColor,
-            onTap: () {},
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: width * .03),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  const Icon(Icons.gif_box),
-                  SizedBox(
-                    width: width * .01,
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(
+                  height: height * .05,
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        blurRadius: 10,
+                        spreadRadius: 2,
+                        offset: Offset(0, 5),
+                      ),
+                    ],
                   ),
-                  const Text('Orders'),
-                  SizedBox(
-                    width: width * .63,
+                  child: CircleAvatar(
+                    radius: 70,
+                    backgroundColor: Colors.grey[300],
+                    backgroundImage: userFormController.selectedImage != null
+                        ? FileImage(userFormController.selectedImage!)
+                        : null,
+                    child: userFormController.selectedImage == null
+                        ? const Icon(Icons.camera_alt,
+                            size: 40, color: Colors.black54)
+                        : null,
                   ),
-                  SvgPicture.asset(
-                    Assets.arrowForward,
-                    color: Colors.black,
-                    height: height * .017,
-                  )
-                ],
+                ),
+                const SizedBox(height: 15),
+                Text(
+                  userFormController.nameController.text,
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 20),
+                _buildProfileOption(Icons.message, "Messages", width, () {
+                  Navigator.pushNamed(context, RoutesName.messageScreen);
+                }),
+                _buildProfileOption(Icons.gif_box, "Orders", width, () {}),
+                _buildProfileOption(
+                    Icons.privacy_tip_outlined, "Terms and Conditions", width,
+                    () {
+                  Navigator.pushNamed(
+                      context, RoutesName.termAndConditionScreen);
+                }),
+                _buildProfileOption(Icons.location_on, "Address", width, () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const AddressScreen()));
+                }),
+                _buildProfileOption(Icons.light_mode, "Theme", width, () {
+                  showThemeBottomSheet(context, themeManager);
+                }),
+                _buildProfileOption(Icons.logout_sharp, "Log out", width, () {
+                  logoutRepo.showLogoutDialog();
+                }),
+              ],
+            ),
+            if (logoutRepo.isLogoutDialogVisible)
+              const Opacity(
+                opacity: 0.5,
+                child: ModalBarrier(dismissible: false, color: Colors.black),
               ),
+            if (logoutRepo.isLogoutDialogVisible)
+              const Center(child: CustomLogoutAlert()),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProfileOption(
+      IconData icon, String title, double width, VoidCallback onTap) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Container(
+        width: width * 0.9,
+        height: 50,
+        decoration: BoxDecoration(
+          color: AppColor.dialogBgColor,
+          border:
+              Border.all(color: AppColor.appimagecolor), // Added black border
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: InkWell(
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Icon(icon, color: AppColor.appimagecolor),
+                    const SizedBox(width: 10),
+                    Text(title,
+                        style: const TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.w500)),
+                  ],
+                ),
+                SvgPicture.asset(
+                  Assets.arrowForward,
+                  color: Colors.black,
+                  height: 18,
+                ),
+              ],
             ),
           ),
-          SizedBox(
-            height: height * .03,
-          ),
-          CustomContainer(
-            width: width * 1,
-            height: height * .05,
-            bgColor: AppColor.dialogBgColor,
-            onTap: () {
-              Navigator.pushNamed(context, RoutesName.termAndConditionScreen);
-            },
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: width * .03),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  const Icon(Icons.privacy_tip_outlined),
-                  SizedBox(
-                    width: width * .01,
-                  ),
-                  const Text('Term and condition'),
-                  SizedBox(
-                    width: width * .43,
-                  ),
-                  SvgPicture.asset(
-                    Assets.arrowForward,
-                    color: Colors.black,
-                    height: height * .017,
-                  )
-                ],
-              ),
-            ),
-          ),
-          SizedBox(
-            height: height * .03,
-          ),
-          CustomContainer(
-            width: width * 1,
-            height: height * .05,
-            bgColor: AppColor.dialogBgColor,
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const AddressScreen()));
-            },
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: width * .03),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  const Icon(Icons.location_on),
-                  SizedBox(
-                    width: width * .01,
-                  ),
-                  const Text('Address'),
-                  SizedBox(
-                    width: width * .6,
-                  ),
-                  SvgPicture.asset(
-                    Assets.arrowForward,
-                    color: Colors.black,
-                    height: height * .017,
-                  )
-                ],
-              ),
-            ),
-          ),
-          SizedBox(
-            height: height * .03,
-          ),
-          CustomContainer(
-            width: width * 1,
-            height: height * .05,
-            bgColor: AppColor.dialogBgColor,
-            onTap: () {
-              showThemeBottomSheet(context, themeManager);
-            },
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: width * .03),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  const Icon(Icons.light_mode),
-                  SizedBox(
-                    width: width * .01,
-                  ),
-                  const Text('Theme'),
-                  SizedBox(
-                    width: width * .6,
-                  ),
-                  SvgPicture.asset(
-                    Assets.arrowForward,
-                    color: Colors.black,
-                    height: height * .017,
-                  ),
-                ],
-              ),
-            ),
-          ),
-          SizedBox(
-            height: height * .03,
-          ),
-          CustomContainer(
-            width: width * 1,
-            height: height * .05,
-            bgColor: AppColor.dialogBgColor,
-            onTap: () {
-              logoutRepo.showLogoutDialog();
-            },
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: width * .03),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  const Icon(Icons.logout_sharp),
-                  SizedBox(
-                    width: width * .01,
-                  ),
-                  const Text('Log out'),
-                  SizedBox(
-                    width: width * .6,
-                  ),
-                  SvgPicture.asset(
-                    Assets.arrowForward,
-                    color: Colors.black,
-                    height: height * .017,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ]),
-        if (logoutRepo.isLogoutDialogVisible)
-          const Opacity(
-            opacity: 0.5,
-            child: ModalBarrier(dismissible: false, color: Colors.black),
-          ),
-        if (logoutRepo.isLogoutDialogVisible)
-          const Center(
-            child: CustomLogoutAlert(),
-          ),
-      ],
-    )));
+        ),
+      ),
+    );
   }
 }
 

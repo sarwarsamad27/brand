@@ -1,9 +1,11 @@
+// ignore_for_file: unused_local_variable
+
 import 'package:brand/barrelView/barrelView.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // await Firebase.initializeApp();
   await CacheHelper.init();
-  // ignore: unused_local_variable
   Widget widget;
   String? token;
   bool? onBoarding = CacheHelper.getData(key: 'onBoarding');
@@ -35,7 +37,6 @@ class MyApp extends StatelessWidget {
     return prefs.getString('token');
   }
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     final themeManager = Provider.of<ThemeManager>(context);
@@ -43,27 +44,20 @@ class MyApp extends StatelessWidget {
       future: _getToken(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          // Show a loading screen while waiting for the token check
           return const Center(child: CircularProgressIndicator());
         }
 
-        // If a token is found, set the home screen as the initial route
         final initialRoute = (snapshot.data != null)
-            ? RoutesName.compHomeScreen
-            : RoutesName.compHomeScreen;
+            ? RoutesName.userloginScreen
+            : RoutesName.userloginScreen;
 
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'Flutter Demo',
-          theme: ThemeData.light(), // Light theme
-          darkTheme: ThemeData.dark(), // Dark theme
-          themeMode:
-              themeManager.themeMode, // Dynamic theme based on user preference
+          theme: ThemeData.light(),
+          darkTheme: ThemeData.dark(),
+          themeMode: themeManager.themeMode,
           color: AppColor.screenBgColor,
-          // theme: ThemeData(
-          //   colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          //   useMaterial3: true,
-          // ),
           routes: AppPages.getRoutes(),
           initialRoute: initialRoute,
         );
