@@ -184,7 +184,7 @@ class Orderformcontroller extends ChangeNotifier {
   final TextEditingController countryController = TextEditingController();
 
   // Key for form validation
-  final formKey = GlobalKey<FormState>();
+  // final formKey = GlobalKey<FormState>();
 
   final nameFocusNode = FocusNode();
   final emailFocusNode = FocusNode();
@@ -265,7 +265,12 @@ class Orderformcontroller extends ChangeNotifier {
   // Save the current form data as a new address
   // Save a new order
   void submitForm(BuildContext context) async {
-    if (formKey.currentState!.validate()) {
+    if (validateName(nameController.text) == null &&
+        validateEmail(emailController.text) == null &&
+        validatePhone(phoneController.text) == null &&
+        validateCity(cityController.text) == null &&
+        validatePostalCode(postalCodeController.text) == null &&
+        validateHomeAddress(homeAddressController.text) == null) {
       Map<String, String> newOrder = {
         'name': nameController.text,
         'email': emailController.text,

@@ -1,4 +1,5 @@
 class Global {
-  static var BaseUrl = "https://webapi123.bsite.net/api";
-  static var SignUp = "${BaseUrl}/Users/Register";
+  static var BaseUrl = "https://backend-code-2-tnsb.onrender.com/api/auth";
+  static var SignUp = "${BaseUrl}/userregister";
+  static var Login = "${BaseUrl}/userlogin";
 }

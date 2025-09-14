@@ -5,7 +5,7 @@ class SigninCompanyController extends ChangeNotifier {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
-  final comformKey = GlobalKey<FormState>();
+  // final comformKey = GlobalKey<FormState>();
 
   bool isObsecure = true;
 

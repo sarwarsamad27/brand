@@ -1,28 +1,35 @@
 import 'package:brand/barrelView/barrelView.dart';
-import 'package:brand/view_model/Repository/signUp_Repository.dart';
+import 'package:brand/view_model/Repository/signUpUser_Repository.dart';
 import 'package:flutter/scheduler.dart';
 
-class SigninUsercontroller extends ChangeNotifier {
-  TextEditingController nameController = TextEditingController();
+class SignUpUsercontroller extends ChangeNotifier {
+  // TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-
-  final userformKey = GlobalKey<FormState>();
+  // final GlobalKey<FormState> userformKey = GlobalKey<FormState>();
   Future register(BuildContext context) async {
-    var res = await SignUpRepository.register(
-      nameController.text,
+    var res = await SignUpUserRepository.register(
+      // nameController.text,
       emailController.text,
       passwordController.text,
     );
 
-    if (res != null && res['code_status'] == true) {
+    print("Response Map: $res");
+    print("Code Status: ${res['code_status']}");
+    print("Message: ${res['message']}");
+
+    if (res != null && res['code_status'].toString().toLowerCase() == 'true') {
+      // nameController.clear();
+      emailController.clear();
+      passwordController.clear();
+
       SchedulerBinding.instance.addPostFrameCallback((_) {
         showDialog(
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
               title: const Text('Success'),
-              content: const Text('Register Successfully, Please Login'),
+              content: Text('${res['message'] ?? 'Registered Successfully!'}'),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -30,9 +37,7 @@ class SigninUsercontroller extends ChangeNotifier {
                 TextButton(
                   child: const Text('OK'),
                   onPressed: () {
-                    Navigator.of(context).pop();
-                    Navigator.pushNamed(
-                        context, RoutesName.userloginScreen); // Navigate
+                    Navigator.pushNamed(context, RoutesName.userloginScreen);
                   },
                 ),
               ],
@@ -41,22 +46,26 @@ class SigninUsercontroller extends ChangeNotifier {
         );
       });
     } else {
-      String message = res?['message'] ?? 'Something went wrong, try again';
+      String message = res?['message'] ?? 'Something went wrong';
       showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
             title: const Text('Error'),
-            content: Text('${message} Register failed, Please register again '),
+            content: Text(message),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
+            actions: [
+              TextButton(
+                child: const Text('OK'),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ],
           );
         },
       );
     }
-
-    print(res);
   }
 
   bool isObsecure = true;

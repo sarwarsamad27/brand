@@ -21,7 +21,7 @@ class Comloginscreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Image.asset(
-                  'assets/images/imageIcon.webp', scale: 1,
+                  'assets/images/imageIcon.png', scale: 1,
                   // height: height * 0.2,
                 ),
                 CustomContainer(

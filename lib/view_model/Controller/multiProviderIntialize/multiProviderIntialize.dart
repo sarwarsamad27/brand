@@ -12,7 +12,7 @@ import '../../../barrelView/barrelView.dart';
 class InitializeProvider {
   static List<SingleChildWidget> createChangeNotifierProvider = [
     ChangeNotifierProvider(create: (_) => LoginController()),
-    ChangeNotifierProvider(create: (_) => SigninUsercontroller()),
+    ChangeNotifierProvider(create: (_) => SignUpUsercontroller()),
     ChangeNotifierProvider(create: (_) => ForgotController()),
     ChangeNotifierProvider(create: (_) => VerifyYourIdentityViewModel()),
     ChangeNotifierProvider(create: (_) => CreateNewPasswordViewModel()),

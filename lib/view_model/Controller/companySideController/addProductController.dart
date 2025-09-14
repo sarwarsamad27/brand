@@ -2,7 +2,7 @@ import 'package:brand/barrelView/barrelView.dart';
 import 'package:get/get.dart';
 
 class ProductFormProvider with ChangeNotifier {
-  final _formKey = GlobalKey<FormState>();
+  // final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _priceController = TextEditingController();
@@ -16,7 +16,7 @@ class ProductFormProvider with ChangeNotifier {
   final List<CompanyProducts> listSelectedProduct = [];
 
   // Getters
-  GlobalKey<FormState> get formKey => _formKey;
+  // GlobalKey<FormState> get formKey => _formKey;
   TextEditingController get nameController => _nameController;
   TextEditingController get descriptionController => _descriptionController;
   TextEditingController get priceController => _priceController;
@@ -69,9 +69,9 @@ class ProductFormProvider with ChangeNotifier {
     addToCart(product);
   }
 
-  bool validateForm() {
-    return _formKey.currentState?.validate() ?? false;
-  }
+  // bool validateForm() {
+  //   // return _formKey.currentState?.validate() ?? false;
+  // }
 
   CompanyProducts saveProduct() {
     final newProduct = CompanyProducts(

@@ -72,14 +72,14 @@ class SigninCompanyScreen extends StatelessWidget {
               ),
               CustomButton(
                 onTap: () {
-                  if (signIncontroller.comformKey.currentState!.validate()) {
-                    // logincontroller.loginUser().then(
-                    //   (value) {
-                    Navigator.pushReplacementNamed(
-                        context, RoutesName.homeScreen);
-                    //   },
-                    // );
-                  }
+                  // if (signIncontroller.comformKey.currentState!.validate()) {
+                  // logincontroller.loginUser().then(
+                  //   (value) {
+                  Navigator.pushReplacementNamed(
+                      context, RoutesName.homeScreen);
+                  //   },
+                  // );
+                  // }
 
                   // Navigator.pushNamed(context, RoutesName.loginScreen);
                 },

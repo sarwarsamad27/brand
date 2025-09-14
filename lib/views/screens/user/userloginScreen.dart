@@ -83,9 +83,8 @@ class Loginscreen extends StatelessWidget {
             ),
             SizedBox(height: height * .03),
             CustomButton(
-              onTap: () =>
-                  Navigator.pushNamed(context, RoutesName.userFormScreen),
-              title: "Log In",
+              title: logincontroller.isLoading ? "Please wait..." : "Log In",
+              onTap: () => logincontroller.userLogin(context),
               bgColor: AppColor.appimagecolor,
               textStyle: const TextStyle(
                 color: AppColor.whiteColor,

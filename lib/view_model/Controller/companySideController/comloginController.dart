@@ -4,7 +4,7 @@ class CompLoginController extends ChangeNotifier {
   TextEditingController comEmailController = TextEditingController();
   TextEditingController comNameController = TextEditingController();
   TextEditingController comPasswordController = TextEditingController();
-  final formKey = GlobalKey<FormState>();
+  // final formKey = GlobalKey<FormState>();
 
   bool isObsecure = true;
   String? loginError;
@@ -30,7 +30,7 @@ class CompLoginController extends ChangeNotifier {
 
   // Handle login action
   Future<void> login() async {
-    if (!formKey.currentState!.validate()) return;
+    // if (!formKey.currentState!.validate()) return;
 
     isLoading = true;
     loginError = null;
