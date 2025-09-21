@@ -4,14 +4,33 @@ class HomescreenController with ChangeNotifier {
   int currentIndex = 0;
   PageController pageController = PageController(initialPage: 0);
   num totalPrice = 0;
-  List<Widget> bottomScreens = [
-    ExploreScreen(
-        // product: widget. product ,
-        ),
-    const Searchscreen(),
-    const Favouritescreen(),
-    const ProfileScreen(),
-  ];
+
+  String userId = "";
+  bool isUserIdLoaded = false;
+
+  HomescreenController() {
+    _loadUserId();
+  }
+
+  Future<void> _loadUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+    userId = prefs.getString("id") ?? "";
+    print("✅ Loaded userId: $userId");
+    isUserIdLoaded = true;
+    notifyListeners();
+  }
+
+  /// return bottom screens dynamically
+  List<Widget> get bottomScreens {
+    return [
+      ExploreScreen(),
+      const Searchscreen(),
+      isUserIdLoaded
+          ? FavouriteScreen(userId: userId) // ✅ ab real userId pass ho raha hai
+          : const Center(child: CircularProgressIndicator()), // loading
+      const ProfileScreen(),
+    ];
+  }
 
   List<String> titles = [
     'Home',
@@ -20,9 +39,6 @@ class HomescreenController with ChangeNotifier {
     'Settings',
   ];
 
-  // List<ProductsModel> cartItems = [];
-
-  // Change the selected bottom navigation index
   void changeBottom(int index) {
     currentIndex = index;
     pageController.jumpToPage(index);

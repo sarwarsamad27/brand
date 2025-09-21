@@ -1,53 +1,31 @@
-import 'package:brand/barrelView/barrelView.dart';
-import 'package:get/get.dart';
+import 'dart:io';
+import 'package:brand/view_model/Repository/CompanyRepository/createComProductRepository.dart';
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:brand/generate/companySideModels/createComProductModel.dart';
 
-class ProductFormProvider with ChangeNotifier {
-  // final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
-  final _descriptionController = TextEditingController();
-  final _priceController = TextEditingController();
-  final _stockController = TextEditingController();
-  final _discountController = TextEditingController();
+class CreateProductController with ChangeNotifier {
+  // 🔹 Form controllers
+  final nameController = TextEditingController();
+  final descriptionController = TextEditingController();
+  final priceController = TextEditingController();
+  final stockController = TextEditingController();
+  final discountController = TextEditingController();
+
+  // 🔹 Image Picker
   final List<String> images = [];
-  String _selectedCategory = "Hoodies";
-  final List<CompanyProducts> cart = [];
-
   final ImagePicker _picker = ImagePicker();
-  final List<CompanyProducts> listSelectedProduct = [];
 
-  // Getters
-  // GlobalKey<FormState> get formKey => _formKey;
-  TextEditingController get nameController => _nameController;
-  TextEditingController get descriptionController => _descriptionController;
-  TextEditingController get priceController => _priceController;
-  TextEditingController get stockController => _stockController;
-  TextEditingController get discountController => _discountController;
-
+  // 🔹 Category (Color)
+  String _selectedCategory = "Red";
   String get selectedCategory => _selectedCategory;
 
-  // Setters
   void setCategory(String category) {
     _selectedCategory = category;
     notifyListeners();
   }
 
-  void removeImage(String imagePath) {
-    images.remove(imagePath);
-    notifyListeners();
-  }
-
-  void addToCart(CompanyProducts product) {
-    CompanyProducts? existingProduct =
-        cart.firstWhereOrNull((p) => p.name == product.name);
-
-    if (existingProduct != null) {
-      existingProduct.quantity += 1;
-    } else {
-      cart.add(product);
-    }
-    notifyListeners();
-  }
-
+  // 🔹 Image Handling
   Future<void> pickImage() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
@@ -56,39 +34,54 @@ class ProductFormProvider with ChangeNotifier {
     }
   }
 
-  CompanyProducts? selectedProduct;
-
-  // Setter for selected product
-  void setSelectedProduct(CompanyProducts companyProduct) {
-    selectedProduct = companyProduct;
-    notifyListeners(); // Notify listeners about the change
+  void removeImage(String imagePath) {
+    images.remove(imagePath);
+    notifyListeners();
   }
 
-  void allSelectedProduct(CompanyProducts product) {
-    listSelectedProduct.add(product);
-    addToCart(product);
-  }
+  // 🔹 API State
+  bool _isLoading = false;
+  String? _errorMessage;
+  CreateComProductModel? _response;
 
-  // bool validateForm() {
-  //   // return _formKey.currentState?.validate() ?? false;
-  // }
+  bool get isLoading => _isLoading;
+  String? get errorMessage => _errorMessage;
+  CreateComProductModel? get response => _response;
 
-  CompanyProducts saveProduct() {
-    final newProduct = CompanyProducts(
-      id: DateTime.now().toString(),
-      name: _nameController.text,
-      description: _descriptionController.text,
-      category: _selectedCategory,
-      price: double.parse(_priceController.text),
-      stock: int.parse(_stockController.text),
-      discountPrice: _discountController.text.isNotEmpty
-          ? double.parse(_discountController.text)
-          : null,
-      images: images,
-      sizes: ["S", "M", "L", "XL"],
-      colors: ["Red", "Blue", "Black"],
-      quantity: int.parse(_priceController.text),
-    );
-    return newProduct;
+  // 🔹 Create Product API Call
+  Future<void> createProduct({
+    required String userId,
+    required String brandId,
+  }) async {
+    if (images.isEmpty) {
+      _errorMessage = "Please upload at least one image";
+      notifyListeners();
+      return;
+    }
+
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      final res = await CreateProductRepository.createProduct(
+        productName: nameController.text,
+        productDescription: descriptionController.text,
+        price: priceController.text,
+        stock: stockController.text,
+        discount: discountController.text,
+        userId: userId,
+        brandId: brandId,
+        category: _selectedCategory,
+        images: images.map((e) => File(e)).toList(), // 👈 list bhejenge
+      );
+
+      _response = res;
+    } catch (e) {
+      _errorMessage = e.toString();
+    }
+
+    _isLoading = false;
+    notifyListeners();
   }
 }

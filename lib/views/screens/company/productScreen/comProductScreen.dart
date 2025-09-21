@@ -1,172 +1,202 @@
-import 'package:brand/barrelView/barrelView.dart';
+import 'package:brand/view_model/Controller/companySideController/comProductController.dart';
+import 'package:brand/views/screens/company/productScreen/addProductFormScreen.dart';
+import 'package:brand/views/screens/company/productScreen/comProductDetailScreen.dart';
+import 'package:flutter/material.dart';
+import 'package:brand/generate/companySideModels/comEntryProductShowModel.dart';
+import 'package:provider/provider.dart';
 
-class ComProductsScreen extends StatelessWidget {
-  final SampleProductModel product;
-  ComProductsScreen({required this.product});
+class ComProductsScreen extends StatefulWidget {
+  final Product product; // featured product
+  final String userId;
+  final String brandId;
+
+  const ComProductsScreen({
+    super.key,
+    required this.product,
+    required this.userId,
+    required this.brandId,
+  });
+
+  @override
+  State<ComProductsScreen> createState() => _ComProductsScreenState();
+}
+
+class _ComProductsScreenState extends State<ComProductsScreen> {
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      Provider.of<ComProductController>(context, listen: false)
+          .fetchProducts(widget.userId, widget.brandId);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final productController = Provider.of<ProductController>(context);
-    // final height = MediaQuery.of(context).size.height * 1;
-
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          // AppBar with FlexibleSpace for Product Details
-          SliverAppBar(
-            expandedHeight: 300.0,
-            pinned: true,
-            flexibleSpace: FlexibleSpaceBar(
-              title: Text(product.name),
-              background: Image.file(
-                File(product.imageUrl),
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-
-          // Product Details Section
-          // SliverList(
-          //   delegate: SliverChildListDelegate(
-          //     [
-          //       const Padding(
-          //         padding: EdgeInsets.all(16.0),
-          //         child: Text(
-          //           "Product Details",
-          //           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          //         ),
-          //       ),
-          //       const Padding(
-          //         padding: EdgeInsets.all(16.0),
-          //         child: Text(
-          //           "This is the detailed description of the product. "
-          //           "Add more fields or content as necessary.",
-          //           style: TextStyle(fontSize: 16),
-          //         ),
-          //       ),
-          //     ],
-          //   ),
-          // ),
-
-          // Product List Grid (wrapped in SliverToBoxAdapter for CustomScrollView compatibility)
-          SliverToBoxAdapter(
-            child: GridView.builder(
-              padding: const EdgeInsets.all(16.0),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 16.0,
-                mainAxisSpacing: 16.0,
-              ),
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: productController.products.length,
-              itemBuilder: (context, index) {
-                final product = productController.products[index];
-                return InkWell(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            ProductDetailScreen(product: product),
-                      ),
-                    );
-                  },
-                  child: Card(
-                    elevation: 4,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.0),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        // Product Image
-                        Expanded(
-                          child: ClipRRect(
-                            borderRadius: const BorderRadius.vertical(
-                              top: Radius.circular(12.0),
-                            ),
-                            child: product.images.isNotEmpty &&
-                                    product.images.first.isNotEmpty
-                                ? (Uri.tryParse(product.images.first)
-                                            ?.isAbsolute ==
-                                        true
-                                    ? Image.network(
-                                        product.images.first,
-                                        fit: BoxFit.cover,
-                                        loadingBuilder:
-                                            (context, child, loadingProgress) {
-                                          if (loadingProgress == null)
-                                            return child;
-                                          return const Center(
-                                            child: CircularProgressIndicator(),
-                                          );
-                                        },
-                                        errorBuilder:
-                                            (context, error, stackTrace) =>
-                                                const Center(
-                                          child: Icon(
-                                            Icons.broken_image,
-                                            size: 50,
-                                            color: Colors.grey,
-                                          ),
-                                        ),
-                                      )
-                                    : Image.file(
-                                        File(product.images.first),
-                                        fit: BoxFit.cover,
-                                        errorBuilder:
-                                            (context, error, stackTrace) =>
-                                                const Center(
-                                          child: Icon(
-                                            Icons.broken_image,
-                                            size: 50,
-                                            color: Colors.grey,
-                                          ),
-                                        ),
-                                      ))
-                                : const Center(
-                                    child: Icon(
-                                      Icons.image_not_supported,
-                                      size: 50,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                          ),
-                        ),
-
-                        // Product Name
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            product.name,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
+      backgroundColor: Colors.grey.shade100,
+      body: Consumer<ComProductController>(
+        builder: (context, controller, child) {
+          return CustomScrollView(
+            slivers: [
+              // 🔹 Collapsing Header
+              SliverAppBar(
+                expandedHeight: 260,
+                pinned: true,
+                backgroundColor: Colors.deepPurple,
+                flexibleSpace: FlexibleSpaceBar(
+                  title: Text(
+                    widget.product.name ?? "No Name",
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      shadows: [
+                        Shadow(
+                          color: Colors.black45,
+                          blurRadius: 4,
+                          offset: Offset(1, 1),
+                        )
                       ],
                     ),
                   ),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
+                  background: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      widget.product.image != null &&
+                              widget.product.image!.isNotEmpty
+                          ? Image.network(
+                              widget.product.image!,
+                              fit: BoxFit.cover,
+                            )
+                          : const Icon(Icons.image_not_supported,
+                              size: 120, color: Colors.grey),
+                      Container(
+                        color: Colors.black26,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
 
-      // Floating Action Button to Add New Products
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => AddProductScreen()),
+              // 🔹 Products Grid
+              SliverPadding(
+                padding: const EdgeInsets.all(16),
+                sliver: SliverGrid(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      final product = controller.productList[index];
+
+                      return InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) =>
+                                  ComProductDetailScreen(product: product),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.15),
+                                blurRadius: 10,
+                                offset: const Offset(0, 6),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Product Image
+                              Expanded(
+                                child: ClipRRect(
+                                  borderRadius: const BorderRadius.vertical(
+                                      top: Radius.circular(16)),
+                                  child: product.images != null &&
+                                          product.images!.isNotEmpty
+                                      ? Image.network(
+                                          product.images!.first,
+                                          fit: BoxFit.cover,
+                                          width: double.infinity,
+                                        )
+                                      : const Icon(Icons.image_not_supported,
+                                          size: 80, color: Colors.grey),
+                                ),
+                              ),
+
+                              // Product Info
+                              Padding(
+                                padding: const EdgeInsets.all(10),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      product.productName ?? "No Name",
+                                      style: const TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black87,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      "Rs. ${product.price ?? 0}",
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.deepPurple,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                    childCount: controller.productList.length,
+                  ),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 16,
+                    mainAxisSpacing: 16,
+                    childAspectRatio: 0.75,
+                  ),
+                ),
+              ),
+            ],
           );
         },
-        child: const Icon(Icons.add),
+      ),
+
+      // 🔹 Floating Action Button
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.deepPurple,
+        onPressed: () async {
+          final newProduct = await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => AddProductScreen(
+                userId: widget.userId,
+                brandId: widget.brandId,
+              ),
+            ),
+          );
+
+          if (newProduct != null) {
+            Provider.of<ComProductController>(context, listen: false)
+                .addProduct(newProduct);
+          }
+        },
+        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:brand/barrelView/barrelView.dart';
+import 'package:brand/views/screens/company/productScreen/comEntryProductShowScreen.dart';
 import 'package:brand/views/screens/company/profileScreen/comProfileScreen.dart';
 
 class ComHomescreenController with ChangeNotifier {
@@ -6,11 +7,15 @@ class ComHomescreenController with ChangeNotifier {
   PageController comPageController = PageController(initialPage: 0);
   num totalPrice = 0;
 
-  List<CompanyProductUserSide> selectedProducts = []; // Store selected products
+  // List<CompanyProductUserSide> selectedProducts = []; // Store selected products
+  final String userId;
 
+  ComHomescreenController({required this.userId});
   List<Widget> get bottomScreens => [
         DashboardScreen(),
-        SampleProductScreen(),
+        ComEntryProductShowScreen(
+          userId: userId,
+        ),
         ComOrdersScreen(), // Pass the stored list
         CompanyProfileScreen(),
       ];
@@ -28,8 +33,8 @@ class ComHomescreenController with ChangeNotifier {
     notifyListeners();
   }
 
-  void updateSelectedProducts(List<CompanyProductUserSide> products) {
-    selectedProducts = products;
-    notifyListeners();
-  }
+  // void updateSelectedProducts(List<CompanyProductUserSide> products) {
+  //   selectedProducts = products;
+  //   notifyListeners();
+  // }
 }

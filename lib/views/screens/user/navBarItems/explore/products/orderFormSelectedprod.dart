@@ -1,5 +1,5 @@
 import 'package:brand/barrelView/barrelView.dart';
-import 'package:brand/generate/companySideMiodels/orderModels.dart';
+import 'package:brand/generate/companySideModels/orderModels.dart';
 import 'package:brand/view_model/Controller/companySideController/comOrderController.dart';
 import 'package:brand/view_model/Controller/companySideController/comproductDetailController.dart';
 import 'package:brand/views/widget/customAppbar.dart';

@@ -7,7 +7,7 @@ class CompanyProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final comFormController = Provider.of<CompanyFormController>(context);
-    final comploginFormController = Provider.of<LoginController>(context);
+    final comploginFormController = Provider.of<UserLoginController>(context);
     final comDashboardController = Provider.of<DashboardController>(context);
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;

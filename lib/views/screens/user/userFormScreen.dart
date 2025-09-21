@@ -8,7 +8,7 @@ class UserFormScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final userFormController = Provider.of<ProfileScreenController>(context);
-    final userloginFormController = Provider.of<LoginController>(context);
+    final userloginFormController = Provider.of<UserLoginController>(context);
     final height = MediaQuery.of(context).size.height * 1;
     final width = MediaQuery.of(context).size.width * 1;
     return Scaffold(

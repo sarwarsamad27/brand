@@ -1,5 +1,4 @@
 import 'package:brand/barrelView/barrelView.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class SignInUserScreen extends StatelessWidget {
   const SignInUserScreen({super.key});

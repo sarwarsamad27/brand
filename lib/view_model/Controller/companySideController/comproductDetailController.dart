@@ -1,6 +1,5 @@
 import 'package:brand/barrelView/barrelView.dart';
 import 'package:get/get.dart';
-import 'package:flutter/material.dart';
 
 class ComProductDetailController with ChangeNotifier {
   int currentIndex = 0;

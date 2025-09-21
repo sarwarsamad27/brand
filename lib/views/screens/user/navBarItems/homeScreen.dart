@@ -1,6 +1,5 @@
 import 'package:brand/barrelView/barrelView.dart';
 import 'package:brand/view_model/Controller/userSideController.dart/homeScreenController.dart';
-import 'package:brand/views/widget/navBar.dart';
 
 // class Homescreen extends StatefulWidget {
 //   const Homescreen({super.key});

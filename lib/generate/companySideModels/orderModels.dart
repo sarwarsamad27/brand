@@ -1,4 +1,4 @@
-import 'package:brand/generate/companySideMiodels/comSideProductModel.dart';
+import 'package:brand/generate/companySideModels/comSideProductModel.dart';
 
 class CustomerOrder {
   final String id;

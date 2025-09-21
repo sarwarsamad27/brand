@@ -1,16 +1,30 @@
-import 'package:brand/barrelView/barrelView.dart';
+import 'dart:io';
+import 'package:brand/view_model/Controller/companySideController/addProductController.dart';
+import 'package:brand/view_model/Controller/companySideController/comProductController.dart';
+import 'package:brand/views/widget/customButton.dart';
+import 'package:brand/views/widget/customTextField.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class AddProductScreen extends StatelessWidget {
+  final String userId;
+  final String brandId;
+
+  const AddProductScreen({
+    super.key,
+    required this.userId,
+    required this.brandId,
+  });
+
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
-    // final width = MediaQuery.of(context).size.width;
 
     return ChangeNotifierProvider(
-      create: (_) => ProductFormProvider(),
+      create: (_) => CreateProductController(),
       child: Scaffold(
         appBar: AppBar(title: const Text("Add Product")),
-        body: Consumer<ProductFormProvider>(
+        body: Consumer<CreateProductController>(
           builder: (context, formProvider, child) {
             return Padding(
               padding: const EdgeInsets.all(16.0),
@@ -18,133 +32,138 @@ class AddProductScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Product Name
-                    SizedBox(height: height * 0.03),
+                    // ✅ Product Name
+                    SizedBox(height: height * 0.02),
                     CustomTextField(
                       controller: formProvider.nameController,
                       labelText: "Product Name",
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "Please enter a product name";
-                        }
-                        return null;
-                      },
                     ),
 
-                    // Product Description
-                    SizedBox(height: height * 0.03),
+                    // ✅ Product Description
+                    SizedBox(height: height * 0.02),
                     CustomTextField(
                       controller: formProvider.descriptionController,
                       labelText: "Product Description",
                     ),
 
-                    // Price
-                    SizedBox(height: height * 0.03),
+                    // ✅ Price
+                    SizedBox(height: height * 0.02),
                     CustomTextField(
                       controller: formProvider.priceController,
                       labelText: "Price",
                       keyboardType: TextInputType.number,
                     ),
 
-                    // Stock
-                    SizedBox(height: height * 0.03),
+                    // ✅ Stock
+                    SizedBox(height: height * 0.02),
                     CustomTextField(
                       controller: formProvider.stockController,
                       labelText: "Stock",
                       keyboardType: TextInputType.number,
                     ),
 
-                    // Discount (Optional)
-                    SizedBox(height: height * 0.03),
+                    // ✅ Discount
+                    SizedBox(height: height * 0.02),
                     CustomTextField(
                       controller: formProvider.discountController,
-                      labelText: "Discount (Optional)",
+                      labelText: "Discount",
                       keyboardType: TextInputType.number,
                     ),
 
-                    // Product Category
-                    SizedBox(height: height * 0.03),
+                    // ✅ Category as Colors
+                    SizedBox(height: height * 0.02),
                     DropdownButtonFormField(
                       value: formProvider.selectedCategory,
-                      items: ["Hoodies", "Dryfit", "Pants", "Drop Shoulder"]
-                          .map((category) => DropdownMenuItem(
-                                value: category,
-                                child: Text(category),
+                      items: ["Red", "Blue", "Black", "White", "Green"]
+                          .map((color) => DropdownMenuItem(
+                                value: color,
+                                child: Text(color),
                               ))
                           .toList(),
                       onChanged: (value) {
                         formProvider.setCategory(value as String);
                       },
                       decoration: const InputDecoration(
-                        labelText: "Product Category",
+                        labelText: "Product Color",
                       ),
                     ),
 
-                    // Upload Image
-                    SizedBox(height: height * 0.03),
+                    // ✅ Upload Image
+                    SizedBox(height: height * 0.02),
                     CustomButton(
                       onTap: formProvider.pickImage,
                       child: const Text("Upload Image"),
                     ),
 
-                    // Display Selected Images
                     if (formProvider.images.isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 16.0),
-                        child: Wrap(
-                          spacing: 8,
-                          runSpacing: 8,
-                          children: formProvider.images
-                              .map((image) => Stack(
-                                    clipBehavior: Clip.none,
-                                    children: [
-                                      // Image Preview
-                                      Image.file(
-                                        File(image),
-                                        width: 100,
-                                        height: 100,
-                                        fit: BoxFit.cover,
-                                      ),
-                                      // Cross Icon for Deletion
-                                      Positioned(
-                                        top: -10,
-                                        left: -10,
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            formProvider.removeImage(image);
-                                          },
-                                          child: CircleAvatar(
-                                            radius: 12,
-                                            backgroundColor:
-                                                Colors.grey.shade500,
-                                            child: const Icon(
-                                              Icons.close,
-                                              size: 16,
-                                              color: Colors.white,
-                                            ),
-                                          ),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: formProvider.images
+                            .map((image) => Stack(
+                                  children: [
+                                    Image.file(
+                                      File(image),
+                                      width: 100,
+                                      height: 100,
+                                      fit: BoxFit.cover,
+                                    ),
+                                    Positioned(
+                                      top: -10,
+                                      left: -10,
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          formProvider.removeImage(image);
+                                        },
+                                        child: CircleAvatar(
+                                          radius: 12,
+                                          backgroundColor: Colors.red,
+                                          child: const Icon(Icons.close,
+                                              size: 16, color: Colors.white),
                                         ),
                                       ),
-                                    ],
-                                  ))
-                              .toList(),
-                        ),
+                                    ),
+                                  ],
+                                ))
+                            .toList(),
                       ),
 
-                    // Save Product Button
+                    // ✅ Save Product Button
                     SizedBox(height: height * 0.03),
-                    CustomButton(
-                      onTap: () {
-                        if (formProvider == null) return;
-                        {
-                          final newProduct = formProvider.saveProduct();
-                          Provider.of<ProductController>(context, listen: false)
-                              .addProduct(newProduct);
-                          Navigator.pop(context);
-                        }
-                      },
-                      child: const Text("Save Product"),
-                    ),
+                    formProvider.isLoading
+                        ? const Center(child: CircularProgressIndicator())
+                        : CustomButton(
+                            onTap: () async {
+                              await formProvider.createProduct(
+                                userId: userId,
+                                brandId: brandId,
+                              );
+
+                              if (formProvider.errorMessage != null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content:
+                                          Text(formProvider.errorMessage!)),
+                                );
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text(
+                                          "✅ Product created successfully")),
+                                );
+
+                                // ✅ Product list refresh karo
+                                final productController =
+                                    context.read<ComProductController>();
+                                await productController.fetchProducts(
+                                    userId, brandId);
+
+                                Navigator.pop(
+                                    context, formProvider.response?.product);
+                              }
+                            },
+                            child: const Text("Save Product"),
+                          ),
                   ],
                 ),
               ),

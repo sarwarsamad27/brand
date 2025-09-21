@@ -1,5 +1,5 @@
 import 'package:brand/barrelView/barrelView.dart';
-import 'package:brand/view_model/Repository/signUpUser_Repository.dart';
+import 'package:brand/view_model/Repository/UserRepository/signUpUser_Repository.dart';
 import 'package:flutter/scheduler.dart';
 
 class SignUpUsercontroller extends ChangeNotifier {

@@ -1,11 +1,11 @@
 import 'package:brand/barrelView/barrelView.dart';
 
-class Loginscreen extends StatelessWidget {
-  const Loginscreen({super.key});
+class UserLoginscreen extends StatelessWidget {
+  const UserLoginscreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final logincontroller = Provider.of<LoginController>(context);
+    final logincontroller = Provider.of<UserLoginController>(context);
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
 
@@ -20,8 +20,8 @@ class Loginscreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Image.asset(
-                  'assets/images/imageIcon.webp', scale: 1,
-                  // height: height * 0.2,
+                  'assets/images/imageIcon.webp',
+                  scale: 1,
                 ),
                 CustomContainer(
                   height: height * .05,
@@ -65,7 +65,6 @@ class Loginscreen extends StatelessWidget {
                           : Icons.remove_red_eye_rounded,
                       color: AppColor.appimagecolor,
                     ),
-                    color: AppColor.primaryColor,
                   ),
                 ),
               ],
@@ -98,33 +97,13 @@ class Loginscreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 InkWell(
-                  onTap: () async {
-                    // final User? user = await logincontroller.handleSignIn();
-                    // if (user != null) {
-                    //   // User signed in successfully
-                    //   Navigator.push(
-                    //       context,
-                    //       MaterialPageRoute(
-                    //           builder: (context) => const Homescreen()));
-                    //   // You can navigate to another screen or perform other actions here.
-                    // }
-                  },
+                  onTap: () {},
                   child: const CircleAvatar(
                     backgroundColor: Colors.transparent,
                     child: Image(image: AssetImage('assets/images/google.png')),
                   ),
                 ),
-                SizedBox(
-                  width: width * .04,
-                ),
-                InkWell(
-                  onTap: () {},
-                  child: const CircleAvatar(
-                    backgroundColor: Colors.transparent,
-                    child:
-                        Image(image: AssetImage('assets/images/facebook.png')),
-                  ),
-                ),
+                SizedBox(width: width * .04),
               ],
             ),
             SizedBox(height: height * .04),

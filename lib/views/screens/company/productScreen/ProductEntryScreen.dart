@@ -1,9 +1,12 @@
 import 'package:brand/barrelView/barrelView.dart';
 
-class SampleProductForm extends StatelessWidget {
+class ComProductEntryScreen extends StatelessWidget {
+  final userId;
+  const ComProductEntryScreen({super.key, required this.userId});
+
   @override
   Widget build(BuildContext context) {
-    final productController = Provider.of<SampleProductController>(context);
+    final productController = Provider.of<ComProductEntryController>(context);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Add Product')),
@@ -12,6 +15,7 @@ class SampleProductForm extends StatelessWidget {
         child: SingleChildScrollView(
           child: Column(
             children: [
+              // Image Picker
               GestureDetector(
                 onTap: productController.pickImage,
                 child: Container(
@@ -23,7 +27,7 @@ class SampleProductForm extends StatelessWidget {
                           children: [
                             Image.file(
                               productController.pickedImage!,
-                              fit: BoxFit.contain,
+                              fit: BoxFit.cover,
                               width: double.infinity,
                             ),
                             Positioned(
@@ -41,17 +45,31 @@ class SampleProductForm extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
+
+              // Name Field
               TextField(
                 controller: productController.nameController,
                 decoration: const InputDecoration(labelText: 'Product Name'),
               ),
               const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  productController.saveProduct(context);
-                },
-                child: const Text('Save Product'),
-              ),
+
+              // Save Button
+              productController.isLoading
+                  ? const CircularProgressIndicator()
+                  : ElevatedButton(
+                      onPressed: () {
+                        productController.saveProduct(context);
+                      },
+                      child: const Text('Save Product'),
+                    ),
+
+              // Error / Response
+              if (productController.errorMessage != null)
+                Text(productController.errorMessage!,
+                    style: const TextStyle(color: Colors.red)),
+              if (productController.productResponse != null)
+                Text(productController.productResponse!.message ?? "",
+                    style: const TextStyle(color: Colors.green)),
             ],
           ),
         ),

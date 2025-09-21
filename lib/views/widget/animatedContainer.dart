@@ -1,23 +1,23 @@
-import 'package:brand/barrelView/barrelView.dart';
-import 'package:brand/generate/userSideModel/exploreModel.dart';
-import 'package:brand/view_model/Controller/companySideController/comproductDetailController.dart';
-import 'package:brand/views/screens/company/profileScreen/comProfileScreen.dart';
+import 'package:flutter/material.dart';
 
 class AnimatedCompanyCard extends StatefulWidget {
-  final CompanyProductUserSide? product;
-  final ExploreModel company;
+  final String imageUrl;
+  final String title;
   final int index;
-  final ComProductDetailController productController;
+  final VoidCallback? onTap;
+  final VoidCallback? onAvatarTap;
 
   const AnimatedCompanyCard({
-    this.product,
-    required this.company,
+    super.key,
+    required this.imageUrl,
+    required this.title,
     required this.index,
-    required this.productController,
+    this.onTap,
+    this.onAvatarTap,
   });
 
   @override
-  _AnimatedCompanyCardState createState() => _AnimatedCompanyCardState();
+  State<AnimatedCompanyCard> createState() => _AnimatedCompanyCardState();
 }
 
 class _AnimatedCompanyCardState extends State<AnimatedCompanyCard>
@@ -30,13 +30,14 @@ class _AnimatedCompanyCardState extends State<AnimatedCompanyCard>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 500),
     );
     _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
     );
-    Future.delayed(Duration(milliseconds: widget.index * 200), () {
-      _controller.forward();
+
+    Future.delayed(Duration(milliseconds: widget.index * 150), () {
+      if (mounted) _controller.forward();
     });
   }
 
@@ -53,28 +54,22 @@ class _AnimatedCompanyCardState extends State<AnimatedCompanyCard>
       child: Column(
         children: [
           InkWell(
-            onTap: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) => Productscreen(product: null,
-
-              //     ),
-              //   ),
-              // );
-            },
+            onTap: widget.onTap,
             child: Card(
-              elevation: 10,
+              elevation: 8,
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20)),
+                borderRadius: BorderRadius.circular(20),
+              ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(20),
                 child: Image.network(
-                  widget.company.imageUrl,
-                  height: 190,
+                  widget.imageUrl.isNotEmpty
+                      ? widget.imageUrl
+                      : "https://picsum.photos/400/300",
+                  height: 180,
                   width: double.infinity,
                   fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => Icon(
+                  errorBuilder: (_, __, ___) => const Icon(
                     Icons.broken_image,
                     size: 50,
                     color: Colors.grey,
@@ -83,26 +78,25 @@ class _AnimatedCompanyCardState extends State<AnimatedCompanyCard>
               ),
             ),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              InkWell(
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => CompanyProfileScreen()));
-                },
+              GestureDetector(
+                onTap: widget.onAvatarTap,
                 child: CircleAvatar(
-                  radius: 12,
-                  backgroundImage: NetworkImage(widget.company.imageUrl),
+                  radius: 14,
+                  backgroundImage: NetworkImage(
+                    widget.imageUrl.isNotEmpty
+                        ? widget.imageUrl
+                        : "https://picsum.photos/50/50",
+                  ),
                 ),
               ),
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
               Flexible(
                 child: Text(
-                  widget.company.name,
+                  widget.title,
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,

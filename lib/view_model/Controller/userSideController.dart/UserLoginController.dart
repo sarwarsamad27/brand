@@ -1,7 +1,7 @@
 import 'package:brand/barrelView/barrelView.dart';
-import 'package:brand/view_model/Repository/UserLogin_repository.dart';
+import 'package:brand/view_model/Repository/UserRepository/UserLogin_repository.dart';
 
-class LoginController with ChangeNotifier {
+class UserLoginController with ChangeNotifier {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
@@ -16,44 +16,32 @@ class LoginController with ChangeNotifier {
     notifyListeners();
   }
 
-  Future userLogin(BuildContext context) async {
-    var res = await LoginRepository.userLogin(
+  Future<void> userLogin(BuildContext context) async {
+    _isLoading = true;
+    notifyListeners();
+
+    final res = await LoginRepository.userLogin(
       emailController.text.trim(),
       passwordController.text.trim(),
     );
 
-    print("Response Map: $res");
-    print("Code Status: ${res['code_status']}");
-    print("Message: ${res['message']}");
+    _isLoading = false;
+    notifyListeners();
 
-    if (res != null && res['code_status'].toString().toLowerCase() == 'true') {
-      emailController.clear();
-      passwordController.clear();
+    if (res != null && res.message!.contains("Login successful")) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString("id", res.user?.id ?? "");
+      await prefs.setString("email", res.user?.email ?? "");
+      print("✅ Saved userId: ${res.user?.id}");
+
+      clearControllers();
 
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const Homescreen()),
       );
     } else {
-      String message = res?['message'] ?? 'Something went wrong';
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Error'),
-            content: Text(message),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            actions: [
-              TextButton(
-                child: const Text('OK'),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
-            ],
-          );
-        },
-      );
+      _showDialog(context, "Error", res?.message ?? "Something went wrong");
     }
   }
 

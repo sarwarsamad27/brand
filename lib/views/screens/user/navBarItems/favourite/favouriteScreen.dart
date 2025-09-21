@@ -1,134 +1,256 @@
 import 'package:brand/barrelView/barrelView.dart';
-import 'package:brand/utiles/appHelpers.dart';
-import 'package:brand/view_model/Controller/companySideController/comproductDetailController.dart';
+import 'package:brand/view_model/Controller/userSideController.dart/favouriteProductController.dart';
 import 'package:brand/views/widget/customAppbar.dart';
 
-class Favouritescreen extends StatelessWidget {
-  const Favouritescreen({super.key});
+class FavouriteScreen extends StatelessWidget {
+  final String userId;
+  const FavouriteScreen({super.key, required this.userId});
 
   @override
   Widget build(BuildContext context) {
-    final productProvider = Provider.of<ComProductDetailController>(context);
-    final favorites = productProvider.cart;
-    return Scaffold(
-      backgroundColor: AppColor.appbackgroundcolor,
-      appBar: modernAppBar(context,
-          name: 'Favourite', detail: 'check your product'),
-      body: Consumer<ComProductDetailController>(
-        builder: (context, productProvider, child) {
-          final favorites = productProvider.cart;
+    return ChangeNotifierProvider(
+      create: (_) => FavouriteController()..loadFavourites(userId),
+      child: Consumer<FavouriteController>(
+        builder: (context, favController, child) {
+          if (favController.isLoading) {
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          }
 
-          return favorites.isEmpty
-              ? const Center(
-                  child: Text(
-                    "Your favourites list is empty!",
-                    style: TextStyle(fontSize: 18, color: Colors.grey),
-                  ),
-                )
-              : Column(
-                  children: [
-                    // List of Favorites
-                    Expanded(
-                      child: ListView.builder(
-                        itemCount: favorites.length,
-                        itemBuilder: (context, index) {
-                          final product = favorites[index];
-                          return ListTile(
-                            leading: SizedBox(
-                              width: 50,
-                              height: 50,
-                              child: product.images.isNotEmpty
-                                  ? Image.file(
-                                      File(product.images[0]),
-                                      fit: BoxFit.cover,
-                                      errorBuilder:
-                                          (context, error, stackTrace) {
-                                        return const Icon(Icons.image,
-                                            size: 50, color: Colors.grey);
-                                      },
-                                    )
-                                  : const Icon(Icons.image,
-                                      size: 50, color: Colors.grey),
+          final favourites = favController.favourites;
+          final totalAmount = favController.totalAmount;
+
+          return Scaffold(
+            backgroundColor: AppColor.appbackgroundcolor,
+            appBar: modernAppBar(
+              context,
+              name: "Favourites",
+              detail: "Check your products",
+            ),
+            body: favourites.isEmpty
+                ? const Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.favorite_border,
+                            size: 80, color: Colors.grey),
+                        SizedBox(height: 10),
+                        Text(
+                          "Your favourites list is empty!",
+                          style: TextStyle(fontSize: 18, color: Colors.grey),
+                        ),
+                      ],
+                    ),
+                  )
+                : Column(
+                    children: [
+                      Expanded(
+                        child: ListView.builder(
+                          padding: const EdgeInsets.all(16),
+                          itemCount: favourites.length,
+                          itemBuilder: (context, index) {
+                            final fav = favourites[index];
+                            final product = fav.product;
+
+                            return Container(
+                              margin: const EdgeInsets.only(bottom: 14),
+                              padding: const EdgeInsets.all(14),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(16),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.shade300,
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
+                              ),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // ✅ Product Image / Placeholder
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: (product?.images?.isNotEmpty ??
+                                            false)
+                                        ? Image.network(
+                                            product!.images!.first,
+                                            width: 90,
+                                            height: 90,
+                                            fit: BoxFit.cover,
+                                            errorBuilder:
+                                                (context, error, stackTrace) =>
+                                                    Container(
+                                              width: 90,
+                                              height: 90,
+                                              color: Colors.grey[300],
+                                              child: const Icon(Icons.image,
+                                                  size: 40,
+                                                  color: Colors.white),
+                                            ),
+                                          )
+                                        : Container(
+                                            width: 90,
+                                            height: 90,
+                                            color: Colors.grey[300],
+                                            child: const Icon(Icons.image,
+                                                size: 40, color: Colors.white),
+                                          ),
+                                  ),
+
+                                  const SizedBox(width: 14),
+
+                                  // ✅ Product Details
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          product?.productName ?? "No name",
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        const SizedBox(height: 6),
+                                        Text(
+                                          "Rs. ${product?.price ?? 0}",
+                                          style: const TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.green,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 8),
+
+                                        // ✅ Quantity Controls
+                                        Row(
+                                          children: [
+                                            IconButton(
+                                              icon: const Icon(
+                                                Icons.remove_circle,
+                                                color: Colors.red,
+                                              ),
+                                              onPressed: () {
+                                                if (fav.quantity > 1) {
+                                                  favController.updateQuantity(
+                                                      fav, fav.quantity - 1);
+                                                }
+                                              },
+                                            ),
+                                            Text(
+                                              "${fav.quantity}",
+                                              style: const TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            IconButton(
+                                              icon: const Icon(
+                                                Icons.add_circle,
+                                                color: Colors.green,
+                                              ),
+                                              onPressed: () {
+                                                favController.updateQuantity(
+                                                    fav, fav.quantity + 1);
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+
+                                  // ✅ Delete Button
+                                  IconButton(
+                                    icon: const Icon(Icons.delete,
+                                        color: Colors.red),
+                                    onPressed: () async {
+                                      await favController.removeFromFavourites(
+                                        userId: userId,
+                                        productId: product?.sId ?? "",
+                                        context: context,
+                                      );
+                                    },
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+
+                      // ✅ Total & Checkout
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(20),
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.shade400,
+                              blurRadius: 12,
+                              offset: const Offset(0, -3),
                             ),
-                            title: Text(product.name),
-                            subtitle: Row(
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Expanded(child: Text(product.description)),
-                                const SizedBox(width: 10),
-                                IconButton(
-                                  icon: const Icon(Icons.remove, size: 20),
-                                  onPressed: () {
-                                    productProvider.decreaseQuantity(product);
-                                  },
+                                const Text(
+                                  "Total:",
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                                 Text(
-                                  '${product.price}',
-                                  style: const TextStyle(color: Colors.grey),
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.add, size: 20),
-                                  onPressed: () {
-                                    productProvider.increaseQuantity(product);
-                                  },
+                                  "Rs. $totalAmount",
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.green,
+                                  ),
                                 ),
                               ],
                             ),
-                            trailing: IconButton(
-                              icon: const Icon(Icons.delete, color: Colors.red),
-                              onPressed: () async {
-                                final bool? confirm = await showDialog(
-                                  context: context,
-                                  builder: (context) => AlertDialog(
-                                    title: const Text('Confirm Delete'),
-                                    content: const Text(
-                                        'Are you sure you want to delete this item?'),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () =>
-                                            Navigator.pop(context, false),
-                                        child: const Text('Cancel'),
-                                      ),
-                                      TextButton(
-                                        onPressed: () =>
-                                            Navigator.pop(context, true),
-                                        child: const Text('Delete'),
-                                      ),
-                                    ],
-                                  ),
-                                );
-
-                                if (confirm == true) {
-                                  productProvider.removeFromCart(product);
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                          '${product.name} removed from favourites!'),
-                                    ),
-                                  );
-                                }
+                            const SizedBox(height: 14),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.black,
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 14),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                              onPressed: () {
+                                // TODO: Checkout Page
                               },
+                              child: const Text(
+                                "Proceed with these products",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.white,
+                                ),
+                              ),
                             ),
-                          );
-                        },
-                      ),
-                    ),
-                    // Conditionally Show "Proceed" Button
-                    if (favorites.isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: SizedBox(
-                          width: double.infinity,
-                          child: CustomButton(
-                            onTap: () {
-                              AppHelpers.showFullBottomSheet(context,
-                                  OrderFormScreen(selectedProducts: favorites));
-                            },
-                            child: const Text("Proceed with favourite product"),
-                          ),
+                          ],
                         ),
                       ),
-                  ],
-                );
+                    ],
+                  ),
+          );
         },
       ),
     );

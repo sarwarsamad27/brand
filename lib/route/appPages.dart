@@ -1,5 +1,5 @@
 import 'package:brand/barrelView/barrelView.dart';
-import 'package:brand/views/screens/company/comloginScreen.dart';
+import 'package:brand/views/screens/company/comLoginScreen.dart';
 import 'package:brand/views/screens/company/compSIdeStart.dart';
 import 'package:brand/views/screens/company/profileScreen/comFormScreen.dart';
 import 'package:brand/views/screens/company/signInCompanyScreen.dart';
@@ -10,7 +10,7 @@ class AppPages {
     return {
       RoutesName.splashScreen: (context) => const Splashscreen(),
       RoutesName.homeScreen: (context) => const Homescreen(),
-      RoutesName.userloginScreen: (context) => const Loginscreen(),
+      RoutesName.userloginScreen: (context) => const UserLoginscreen(),
       RoutesName.usersignInScreen: (context) => const SignInUserScreen(),
       RoutesName.forgotScreen: (context) => const ForgotScreen(),
       RoutesName.verifyYourOTPScreen: (context) => const VerifyYourOTPScreen(),
@@ -27,7 +27,7 @@ class AppPages {
       RoutesName.compHomeScreen: (context) => const CompanyHomeScreen(),
       RoutesName.comSideStartScreen: (context) => const ComSideStartScreen(),
       RoutesName.signinCompanyScreen: (context) => const SigninCompanyScreen(),
-      RoutesName.comLogInScreen: (context) => const Comloginscreen(),
+      RoutesName.comLogInScreen: (context) => const ComLoginScreen(),
       RoutesName.userFormScreen: (context) => const UserFormScreen(),
     };
   }
