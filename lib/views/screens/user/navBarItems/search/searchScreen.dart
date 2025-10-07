@@ -1,6 +1,5 @@
 import 'package:brand/barrelView/barrelView.dart';
 import 'package:brand/view_model/Controller/userSideController.dart/searchScreenController.dart';
-import 'package:brand/views/screens/user/navBarItems/explore/products/productDetailScreen.dart';
 
 class Searchscreen extends StatefulWidget {
   const Searchscreen({super.key});
@@ -15,9 +14,14 @@ class _SearchscreenState extends State<Searchscreen> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() =>
-        Provider.of<SearchProductController>(context, listen: false)
-            .fetchProducts());
+    Future.microtask(() {
+      final productController =
+          Provider.of<SearchProductController>(context, listen: false);
+
+      if (productController.allProducts.isEmpty) {
+        productController.fetchProducts();
+      }
+    });
   }
 
   @override
@@ -69,34 +73,28 @@ class _SearchscreenState extends State<Searchscreen> {
 
               // 🛍 Products Grid
               Expanded(
-                child: products.isNotEmpty
-                    ? GridView.builder(
-                        padding: const EdgeInsets.all(12),
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2, // 2 items per row
-                          crossAxisSpacing: 12,
-                          mainAxisSpacing: 12,
-                          childAspectRatio: 0.8, // adjust card height
-                        ),
-                        itemCount: products.length,
-                        itemBuilder: (context, index) {
-                          final product = products[index];
-
-                          return GestureDetector(
-                            onTap: () {
-                              // Navigator.push(
-                              //   context,
-                              //   MaterialPageRoute(
-                              //     builder: (_) =>
-                              //     // UserProductDetailScreen(
-                              //     //   product: product,
-                              //     //   folderProducts: products,
-                              //     // ),
-                              //   ),
-                              // );
-                            },
-                            child: Card(
+                child: RefreshIndicator(
+                  onRefresh: () async {
+                    final productController =
+                        Provider.of<SearchProductController>(context,
+                            listen: false);
+                    await productController.fetchProducts();
+                    productController.shuffleProducts(); // shuffle on refresh
+                  },
+                  child: products.isNotEmpty
+                      ? GridView.builder(
+                          padding: const EdgeInsets.all(12),
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 12,
+                            mainAxisSpacing: 12,
+                            childAspectRatio: 0.8,
+                          ),
+                          itemCount: products.length,
+                          itemBuilder: (context, index) {
+                            final product = products[index];
+                            return Card(
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(15),
                               ),
@@ -106,7 +104,6 @@ class _SearchscreenState extends State<Searchscreen> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    // Icon or Image
                                     Center(
                                       child: (product.images?.isNotEmpty ??
                                               false)
@@ -117,45 +114,31 @@ class _SearchscreenState extends State<Searchscreen> {
                                               errorBuilder:
                                                   (context, error, stackTrace) {
                                                 return const Icon(
-                                                  Icons.shopping_bag,
-                                                  size: 70,
-                                                  color: Colors.grey,
-                                                );
+                                                    Icons.shopping_bag,
+                                                    size: 70,
+                                                    color: Colors.grey);
                                               },
                                             )
-                                          : const Icon(
-                                              Icons.shopping_bag,
-                                              size: 70,
-                                              color: Colors.grey,
-                                            ),
+                                          : const Icon(Icons.shopping_bag,
+                                              size: 70, color: Colors.grey),
                                     ),
                                     const SizedBox(height: 10),
-
-                                    // Product Name
                                     Text(
                                       product.productName ?? "No name",
                                       style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14,
-                                      ),
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ),
-
-                                    // Company/Brand Name
                                     Text(
-                                      product.brand ?? "No brand",
+                                      product.company ?? "No brand",
                                       style: const TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.grey,
-                                      ),
+                                          fontSize: 12, color: Colors.grey),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ),
-
                                     const Spacer(),
-
-                                    // Price
                                     Text(
                                       "Rs. ${product.price ?? 0}",
                                       style: const TextStyle(
@@ -166,21 +149,26 @@ class _SearchscreenState extends State<Searchscreen> {
                                   ],
                                 ),
                               ),
-                            ),
-                          );
-                        },
-                      )
-                    : Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                            );
+                          },
+                        )
+                      : ListView(
+                          // RefreshIndicator ke liye empty state me bhi scrollable chahiye
                           children: const [
-                            Icon(Icons.search_off,
-                                size: 80, color: Colors.grey),
-                            SizedBox(height: 10),
-                            Text("No products found."),
+                            SizedBox(height: 200),
+                            Center(
+                              child: Column(
+                                children: [
+                                  Icon(Icons.search_off,
+                                      size: 80, color: Colors.grey),
+                                  SizedBox(height: 10),
+                                  Text("No products found."),
+                                ],
+                              ),
+                            ),
                           ],
                         ),
-                      ),
+                ),
               ),
             ],
           ),

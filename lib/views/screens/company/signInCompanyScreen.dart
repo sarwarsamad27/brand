@@ -8,8 +8,9 @@ class SigninCompanyScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final signIncontroller = Provider.of<SigninCompanyController>(context);
-    final height = MediaQuery.of(context).size.height * 1;
-    final width = MediaQuery.of(context).size.width * 1;
+    final height = MediaQuery.of(context).size.height;
+    final width = MediaQuery.of(context).size.width;
+
     return Scaffold(
       backgroundColor: AppColor.appbackgroundcolor,
       body: Padding(
@@ -17,37 +18,30 @@ class SigninCompanyScreen extends StatelessWidget {
         child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Image.asset(
-                'assets/images/imageIcon.webp', scale: 1,
-                // height: height * 0.2,
-              ),
+              Image.asset('assets/images/imageIcon.webp', scale: 1),
+
               CustomTextField(
-                floatingLabelBehavior: FloatingLabelBehavior.always,
                 controller: signIncontroller.nameController,
                 hintText: 'Company Name',
+                floatingLabelBehavior: FloatingLabelBehavior.always,
                 prefixIcon: const Icon(FontAwesomeIcons.person,
                     color: AppColor.appimagecolor),
               ),
-              SizedBox(
-                height: height * .02,
-              ),
+              SizedBox(height: height * .02),
+
               CustomTextField(
-                floatingLabelBehavior: FloatingLabelBehavior.always,
                 controller: signIncontroller.emailController,
                 hintText: 'Company Email...',
-                prefixIcon: const Icon(
-                  Icons.email,
-                  color: AppColor.appimagecolor,
-                ),
+                floatingLabelBehavior: FloatingLabelBehavior.always,
+                prefixIcon:
+                    const Icon(Icons.email, color: AppColor.appimagecolor),
               ),
-              SizedBox(
-                height: height * .02,
-              ),
+              SizedBox(height: height * .02),
+
               CustomTextField(
                 controller: signIncontroller.passwordController,
-                hintText: 'Company password',
+                hintText: 'Company Password',
                 floatingLabelBehavior: FloatingLabelBehavior.always,
                 isObSecure: signIncontroller.isObsecure,
                 suffixIcon: IconButton(
@@ -59,67 +53,59 @@ class SigninCompanyScreen extends StatelessWidget {
                         ? Icons.visibility_off
                         : Icons.visibility,
                     color: AppColor.appimagecolor,
-
-                    // logincontroller.isObsecure ? icons.eye : Assets.hideEye,
-                    // height: width * 0.05, // 5% of screen width for icon size
-                    // width: width * 0.05, // 5% of screen width for icon size
                   ),
-                  color: AppColor.primaryColor,
                 ),
               ),
-              SizedBox(
-                height: height * .03,
-              ),
-              CustomButton(
-                onTap: () {
-                  // if (signIncontroller.comformKey.currentState!.validate()) {
-                  // logincontroller.loginUser().then(
-                  //   (value) {
-                  Navigator.pushReplacementNamed(
-                      context, RoutesName.homeScreen);
-                  //   },
-                  // );
-                  // }
+              SizedBox(height: height * .03),
 
-                  // Navigator.pushNamed(context, RoutesName.loginScreen);
-                },
-                title: "Register",
-                bgColor: AppColor.appimagecolor,
-                textStyle: const TextStyle(
-                  color: AppColor.whiteColor,
-                  fontSize: AppFontSizes.font16,
-                ),
-                height: height * 0.07,
-                // 7% of screen height for button height
-                width: double.infinity,
-              ),
-              const SizedBox(height: 10.0),
+              /// 🔥 Register Button
+              signIncontroller.isLoading
+                  ? const CircularProgressIndicator(
+                      color: AppColor.appimagecolor)
+                  : CustomButton(
+                      onTap: () {
+                        signIncontroller.registerCompany(context);
+                      },
+                      title: "Register",
+                      bgColor: AppColor.appimagecolor,
+                      textStyle: const TextStyle(
+                        color: AppColor.whiteColor,
+                        fontSize: AppFontSizes.font16,
+                      ),
+                      height: height * 0.07,
+                      width: double.infinity,
+                    ),
+
+              const SizedBox(height: 20.0),
+
               const CustomText(
                 text: "OR",
                 style: TextStyle(color: AppColor.textSecondaryColor),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 10.0),
-              InkWell(
+
+              const SizedBox(height: 20.0),
+
+              CustomContainer(
+                height: height * .05,
+                width: width * .5,
+                bgColor: AppColor.appimagecolor,
+                borderRadius: BorderRadius.circular(10),
                 onTap: () {
                   Navigator.pushNamed(context, RoutesName.usersignInScreen);
                 },
-                child: CustomContainer(
-                  height: height * .05,
-                  width: width * .5,
-                  bgColor: AppColor.appimagecolor,
-                  borderRadius: BorderRadius.circular(10),
-                  onTap: () =>
-                      Navigator.pushNamed(context, RoutesName.usersignInScreen),
-                  child: Center(
-                      child: Text(
+                child: const Center(
+                  child: Text(
                     'Register as a user',
                     style: TextStyle(
-                        color: AppColor.whiteColor, fontSize: height * .02),
-                  )),
+                        color: AppColor.whiteColor,
+                        fontWeight: FontWeight.w600),
+                  ),
                 ),
               ),
+
               const SizedBox(height: 20.0),
+
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

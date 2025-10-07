@@ -1,44 +1,19 @@
 import 'package:brand/barrelView/barrelView.dart';
-import 'package:brand/view_model/Controller/companySideController/comloginController.dart';
 import 'package:brand/view_model/Controller/companySideController/compFormController.dart';
 import 'package:brand/views/widget/customAppbar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class ComFormScreen extends StatefulWidget {
+class ComFormScreen extends StatelessWidget {
   const ComFormScreen({super.key});
 
   @override
-  _ComFormScreenState createState() => _ComFormScreenState();
-}
-
-class _ComFormScreenState extends State<ComFormScreen> {
-  @override
-  void initState() {
-    super.initState();
-    _checkFormSubmission();
-  }
-
-  Future<void> _checkFormSubmission() async {
-    final prefs = await SharedPreferences.getInstance();
-    bool isFormSubmitted = prefs.getBool('formSubmitted') ?? false;
-
-    if (isFormSubmitted) {
-      Future.delayed(Duration.zero, () {
-        Navigator.pushReplacementNamed(context, RoutesName.compHomeScreen);
-      });
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final comploginFormController = Provider.of<CompLoginController>(context);
     final comFormController = Provider.of<CompanyFormController>(context);
-
-    final height = MediaQuery.of(context).size.height * 1;
+    final height = MediaQuery.of(context).size.height;
 
     if (comFormController.isFormSubmitted) {
       Future.delayed(Duration.zero, () {
-        Navigator.pushNamed(context, RoutesName.compHomeScreen);
+        Navigator.pushReplacementNamed(context, RoutesName.compHomeScreen);
       });
     }
 
@@ -50,7 +25,10 @@ class _ComFormScreenState extends State<ComFormScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            SizedBox(height: height * .07),
+            if (!comFormController.isFormSubmitted)
+              SizedBox(height: height * .07),
+
+            /// Company logo
             GestureDetector(
               onTap: () => showImagePickerOptions(context, comFormController),
               child: CircleAvatar(
@@ -62,7 +40,6 @@ class _ComFormScreenState extends State<ComFormScreen> {
                 child: comFormController.selectedImage == null
                     ? const Column(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Icon(Icons.camera_alt,
                               size: 40, color: Colors.black54),
@@ -72,7 +49,10 @@ class _ComFormScreenState extends State<ComFormScreen> {
                     : null,
               ),
             ),
+
             SizedBox(height: height * .04),
+
+            /// Form fields
             CustomTextField(
               hintText: 'Company Name',
               labelText: 'Company Name',
@@ -80,13 +60,14 @@ class _ComFormScreenState extends State<ComFormScreen> {
               controller: comFormController.nameController,
             ),
             SizedBox(height: height * .02),
+
             CustomTextField(
               prefixIcon: const Icon(Icons.email_outlined),
               labelText: 'Company Email',
-              readOnly: true,
-              controller: comploginFormController.comEmailController,
+              controller: comFormController.emailController,
             ),
             SizedBox(height: height * .02),
+
             CustomTextField(
               prefixIcon: Icon(FontAwesomeIcons.phone, size: height * .025),
               hintText: 'Enter Company Mobile Number',
@@ -94,6 +75,7 @@ class _ComFormScreenState extends State<ComFormScreen> {
               controller: comFormController.contactController,
             ),
             SizedBox(height: height * .02),
+
             CustomTextField(
               prefixIcon: const Icon(Icons.home),
               hintText: 'Company Address',
@@ -101,43 +83,36 @@ class _ComFormScreenState extends State<ComFormScreen> {
               controller: comFormController.addressController,
             ),
             SizedBox(height: height * .02),
+
             CustomTextField(
-              prefixIcon: const Icon(Icons.home),
+              prefixIcon: const Icon(Icons.description),
               hintText: 'Company Description',
               labelText: 'Description',
               controller: comFormController.descriptionController,
             ),
+
             SizedBox(height: height * .04),
-            CustomButton(
-              onTap: () async {
-                final prefs = await SharedPreferences.getInstance();
 
-                await prefs.setString(
-                    'companyName', comFormController.nameController.text);
-                await prefs.setString(
-                    'companyContact', comFormController.contactController.text);
-                await prefs.setString(
-                    'companyAddress', comFormController.addressController.text);
-                await prefs.setString('companyDescription',
-                    comFormController.descriptionController.text);
-                await prefs.setString('companyEmail',
-                    comploginFormController.comEmailController.text);
-
-                if (comFormController.selectedImage != null) {
-                  await prefs.setString(
-                      'companyImage', comFormController.selectedImage!.path);
-                }
-
-                await prefs.setBool('formSubmitted', true);
-
-                if (mounted) {
-                  Navigator.pushReplacementNamed(
-                      context, RoutesName.compHomeScreen);
-                }
-              },
-              child: const Text("Submit",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-            )
+            /// Submit Button
+            comFormController.isLoading
+                ? const CircularProgressIndicator(color: AppColor.appimagecolor)
+                : CustomButton(
+                    onTap: () {
+                      comFormController
+                          .registerCompanyForm(context)
+                          .then((res) {
+                        if (res != null && res.profile != null) {
+                          Navigator.pushReplacementNamed(
+                              context, RoutesName.compHomeScreen);
+                        }
+                      });
+                    },
+                    child: const Text(
+                      "Submit",
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ),
           ],
         ),
       ),

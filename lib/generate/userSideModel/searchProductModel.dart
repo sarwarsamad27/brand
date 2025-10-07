@@ -37,7 +37,8 @@ class Products {
   String? createdAt;
   String? updatedAt;
   int? iV;
-  String? brand;
+  Null? company;
+  Brand? brand;
 
   Products(
       {this.sId,
@@ -52,6 +53,7 @@ class Products {
       this.createdAt,
       this.updatedAt,
       this.iV,
+      this.company,
       this.brand});
 
   Products.fromJson(Map<String, dynamic> json) {
@@ -67,7 +69,8 @@ class Products {
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
     iV = json['__v'];
-    brand = json['brand'];
+    company = json['company'];
+    brand = json['brand'] != null ? new Brand.fromJson(json['brand']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -84,7 +87,26 @@ class Products {
     data['createdAt'] = this.createdAt;
     data['updatedAt'] = this.updatedAt;
     data['__v'] = this.iV;
-    data['brand'] = this.brand;
+    data['company'] = this.company;
+    if (this.brand != null) {
+      data['brand'] = this.brand!.toJson();
+    }
+    return data;
+  }
+}
+
+class Brand {
+  String? sId;
+
+  Brand({this.sId});
+
+  Brand.fromJson(Map<String, dynamic> json) {
+    sId = json['_id'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['_id'] = this.sId;
     return data;
   }
 }

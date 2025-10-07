@@ -2,6 +2,7 @@ import 'package:brand/barrelView/barrelView.dart';
 import 'package:brand/generate/userSideModel/productShowModel.dart';
 import 'package:brand/view_model/Controller/userSideController.dart/favouriteProductController.dart';
 import 'package:brand/view_model/Controller/userSideController.dart/productDetailController.dart';
+import 'package:brand/views/screens/user/navBarItems/explore/products/orderFormSelectedprod.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 // import 'package:share_plus/share_plus.dart';
 
@@ -247,7 +248,13 @@ class _UserProductDetailScreenState extends State<UserProductDetailScreen> {
                               ),
                             ),
                             onPressed: () {
-                              // TODO: Buy Now
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => OrderCreateScreen(
+                                      selectedProduct: product,
+                                    ),
+                                  ));
                             },
                             child: const Text(
                               "Buy Now",

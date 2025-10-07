@@ -19,9 +19,7 @@ class ComEntryProductShowScreen extends StatelessWidget {
 
     // ✅ Screen load hote hi API call
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (productController.products.isEmpty && !productController.isLoading) {
-        productController.fetchProducts(userId);
-      }
+      productController.fetchProducts(userId);
     });
 
     return SafeArea(
@@ -129,19 +127,34 @@ class ComEntryProductShowScreen extends StatelessWidget {
                                       contentPadding: const EdgeInsets.all(12),
                                       leading: ClipRRect(
                                         borderRadius: BorderRadius.circular(12),
-                                        child: product.image != null
+                                        child: (product.image != null &&
+                                                product.image!.isNotEmpty)
                                             ? Image.network(
                                                 product.image!,
                                                 width: 60,
                                                 height: 60,
                                                 fit: BoxFit.cover,
+                                                errorBuilder: (context, error,
+                                                    stackTrace) {
+                                                  // Fallback if image fails to load
+                                                  return Container(
+                                                    width: 60,
+                                                    height: 60,
+                                                    color: Colors.grey[200],
+                                                    child: const Icon(
+                                                      Icons.broken_image,
+                                                      size: 30,
+                                                      color: Colors.grey,
+                                                    ),
+                                                  );
+                                                },
                                               )
                                             : Container(
                                                 width: 60,
                                                 height: 60,
                                                 color: Colors.grey[200],
                                                 child: const Icon(
-                                                  Icons.image,
+                                                  Icons.image_not_supported,
                                                   size: 30,
                                                   color: Colors.grey,
                                                 ),

@@ -11,9 +11,13 @@ class ComEntryProductShowController with ChangeNotifier {
   List<Product> get products => _products;
   List<Product> get filteredProducts =>
       _filteredProducts.isEmpty ? _products : _filteredProducts;
+  bool _hasFetched = false;
 
   /// ✅ API call to fetch products
   Future<void> fetchProducts(String userId) async {
+    if (_hasFetched) return; // skip if already fetched
+    _hasFetched = true;
+
     isLoading = true;
     errorMessage = null;
     notifyListeners();

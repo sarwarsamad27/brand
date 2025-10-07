@@ -125,7 +125,7 @@ class Homescreen extends StatelessWidget {
         height: 60.0,
         color: AppColor.primaryColor,
         // buttonBackgroundColor: Colors.black26,
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.transparent,
         animationCurve: Curves.easeInOut,
         animationDuration: const Duration(milliseconds: 600),
         onTap: provider.changeBottom,

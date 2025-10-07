@@ -78,7 +78,7 @@ class CustomLogoutAlert extends StatelessWidget {
                 InkWell(
                   // onTap: logoutRepo.logout,
                   onTap: () {
-                    logoutRepo.logout();
+                    logoutRepo.logout(context);
                     Navigator.pushNamed(context, RoutesName.userloginScreen);
                   },
                   child: Container(

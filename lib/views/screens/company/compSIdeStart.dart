@@ -1,4 +1,5 @@
 import 'package:brand/barrelView/barrelView.dart';
+import 'package:brand/resources/global.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
 class ComSideStartScreen extends StatefulWidget {
@@ -19,11 +20,14 @@ class _ComSideStartScreenState extends State<ComSideStartScreen> {
 
   Future<void> _navigateBasedOnFormStatus() async {
     final prefs = await SharedPreferences.getInstance();
-    bool isFormSubmitted = prefs.getBool('isFormSubmitted') ?? false;
+    String? companyId = prefs.getString('companyId');
+
+    bool isFormSubmitted =
+        prefs.getBool('formSubmitted') ?? false; // ✅ same key
 
     Future.delayed(const Duration(seconds: 4), () {
-      if (isFormSubmitted) {
-        Navigator.pushReplacementNamed(context, RoutesName.compHomeScreen);
+      if (isFormSubmitted && companyId!.isNotEmpty) {
+        Navigator.pushReplacementNamed(context, RoutesName.comFormScreen);
       } else {
         Navigator.pushReplacementNamed(context, RoutesName.comFormScreen);
       }

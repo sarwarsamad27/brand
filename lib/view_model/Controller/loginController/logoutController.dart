@@ -13,10 +13,18 @@ class LogoutRepository extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> logout() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
+  Future<void> logout(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear(); // ✅ Remove all saved data
+
     isLogoutDialogVisible = false;
     notifyListeners();
+
+    // ✅ Navigate back to Login Screen
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => const UserLoginscreen()),
+      (route) => false, // remove all previous routes
+    );
   }
 }

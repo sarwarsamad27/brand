@@ -49,6 +49,8 @@ class _AnimatedCompanyCardState extends State<AnimatedCompanyCard>
 
   @override
   Widget build(BuildContext context) {
+    // final width = MediaQuery.of(context).size.width *1;
+    // final height = MediaQuery.of(context).size.height *0.3;
     return ScaleTransition(
       scale: _scaleAnimation,
       child: Column(

@@ -1,5 +1,6 @@
 import 'package:brand/barrelView/barrelView.dart';
 import 'package:brand/views/screens/user/navBarItems/profile/address/address.dart';
+import 'package:brand/views/screens/user/navBarItems/profile/myOrders/myOrderScreen.dart';
 import 'package:brand/views/widget/customAppbar.dart';
 import 'package:brand/views/widget/customContainerAnimation.dart';
 
@@ -17,87 +18,126 @@ class ProfileScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppColor.appbackgroundcolor,
-      appBar:
-          modernAppBar(context, name: 'Profile', detail: 'Check your profile'),
+      appBar: modernAppBar(
+        context,
+        name: 'Profile',
+        detail: 'Check your profile',
+      ),
       body: ScaleFadeAnimation(
         delay: 2,
         child: Stack(
           children: [
-            Positioned.fill(
-              top: 10,
-              left: 10,
-              right: 10,
-              bottom: height * .63,
-              child: Image.asset(
-                'assets/images/imageIcon.webp',
-                fit: BoxFit.cover,
+            // 🔹 Gradient Background
+
+            // 🔹 Content
+            SingleChildScrollView(
+              child: Column(
+                children: [
+                  SizedBox(height: height * .06),
+
+                  // Avatar with Glow
+                  // Avatar with Glow
+                  Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Color(0xFFDF762E),
+                          blurRadius: 20,
+                          spreadRadius: 3,
+                        ),
+                      ],
+                    ),
+                    child: CircleAvatar(
+                      radius: 100,
+                      backgroundColor: Colors.grey[300],
+                      backgroundImage: userFormController.selectedImage != null
+                          ? FileImage(userFormController.selectedImage!)
+                          : const AssetImage('assets/images/imageIcon.webp')
+                              as ImageProvider,
+                    ),
+                  ),
+
+                  const SizedBox(height: 30),
+
+                  // 🔹 Profile Options
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 20, horizontal: 16),
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius:
+                          BorderRadius.vertical(top: Radius.circular(30)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black12,
+                          blurRadius: 15,
+                          offset: Offset(0, -3),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      children: [
+                        _buildProfileOption(
+                          Icons.message_rounded,
+                          "Messages",
+                          width,
+                          () => Navigator.pushNamed(
+                              context, RoutesName.messageScreen),
+                        ),
+                        _buildProfileOption(
+                            Icons.shopping_bag_rounded, "My Orders", width, () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const MyOrderScreen(),
+                            ),
+                          );
+                        }),
+                        _buildProfileOption(
+                          Icons.privacy_tip_rounded,
+                          "Terms & Conditions",
+                          width,
+                          () => Navigator.pushNamed(
+                              context, RoutesName.termAndConditionScreen),
+                        ),
+                        _buildProfileOption(
+                          Icons.location_on_rounded,
+                          "Address",
+                          width,
+                          () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const AddressScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                        _buildProfileOption(
+                          Icons.location_on_rounded,
+                          "Logout",
+                          width,
+                          () {
+                            logoutRepo.logout(context);
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(
-                  height: height * .05,
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
-                        blurRadius: 10,
-                        spreadRadius: 2,
-                        offset: Offset(0, 5),
-                      ),
-                    ],
-                  ),
-                  child: CircleAvatar(
-                    radius: 70,
-                    backgroundColor: Colors.grey[300],
-                    backgroundImage: userFormController.selectedImage != null
-                        ? FileImage(userFormController.selectedImage!)
-                        : null,
-                    child: userFormController.selectedImage == null
-                        ? const Icon(Icons.camera_alt,
-                            size: 40, color: Colors.black54)
-                        : null,
-                  ),
-                ),
-                const SizedBox(height: 15),
-                Text(
-                  userFormController.nameController.text,
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 20),
-                _buildProfileOption(Icons.message, "Messages", width, () {
-                  Navigator.pushNamed(context, RoutesName.messageScreen);
-                }),
-                _buildProfileOption(Icons.gif_box, "Orders", width, () {}),
-                _buildProfileOption(
-                    Icons.privacy_tip_outlined, "Terms and Conditions", width,
-                    () {
-                  Navigator.pushNamed(
-                      context, RoutesName.termAndConditionScreen);
-                }),
-                _buildProfileOption(Icons.location_on, "Address", width, () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const AddressScreen()));
-                }),
-                _buildProfileOption(Icons.light_mode, "Theme", width, () {
-                  showThemeBottomSheet(context, themeManager);
-                }),
-                _buildProfileOption(Icons.logout_sharp, "Log out", width, () {
-                  logoutRepo.showLogoutDialog();
-                }),
-              ],
-            ),
+
+            // 🔹 Logout Overlay
             if (logoutRepo.isLogoutDialogVisible)
               const Opacity(
                 opacity: 0.5,
-                child: ModalBarrier(dismissible: false, color: Colors.black),
+                child: ModalBarrier(
+                  dismissible: false,
+                  color: Colors.black,
+                ),
               ),
             if (logoutRepo.isLogoutDialogVisible)
               const Center(child: CustomLogoutAlert()),
@@ -111,38 +151,41 @@ class ProfileScreen extends StatelessWidget {
       IconData icon, String title, double width, VoidCallback onTap) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Container(
-        width: width * 0.9,
-        height: 50,
-        decoration: BoxDecoration(
-          color: AppColor.dialogBgColor,
-          border:
-              Border.all(color: AppColor.appimagecolor), // Added black border
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: InkWell(
-          onTap: onTap,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    Icon(icon, color: AppColor.appimagecolor),
-                    const SizedBox(width: 10),
-                    Text(title,
-                        style: const TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w500)),
-                  ],
-                ),
-                SvgPicture.asset(
-                  Assets.arrowForward,
-                  color: Colors.black,
-                  height: 18,
-                ),
-              ],
-            ),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(15),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.9),
+            borderRadius: BorderRadius.circular(15),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12.withOpacity(0.08),
+                blurRadius: 8,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Icon(icon, color: Color(0xFFDF762E)),
+                  const SizedBox(width: 12),
+                  Text(
+                    title,
+                    style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black87),
+                  ),
+                ],
+              ),
+              const Icon(Icons.arrow_forward_ios,
+                  size: 16, color: Colors.black54),
+            ],
           ),
         ),
       ),

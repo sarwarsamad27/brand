@@ -1,30 +1,26 @@
-class ExploreModel {
-  int? count;
-  List<Profiles>? profiles;
+class CompProfileModel {
+  String? message;
+  Profile? profile;
 
-  ExploreModel({this.count, this.profiles});
+  CompProfileModel({this.message, this.profile});
 
-  ExploreModel.fromJson(Map<String, dynamic> json) {
-    count = json['count'];
-    if (json['profiles'] != null) {
-      profiles = <Profiles>[];
-      json['profiles'].forEach((v) {
-        profiles!.add(new Profiles.fromJson(v));
-      });
-    }
+  CompProfileModel.fromJson(Map<String, dynamic> json) {
+    message = json['message'];
+    profile =
+        json['profile'] != null ? new Profile.fromJson(json['profile']) : null;
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['count'] = this.count;
-    if (this.profiles != null) {
-      data['profiles'] = this.profiles!.map((v) => v.toJson()).toList();
+    data['message'] = this.message;
+    if (this.profile != null) {
+      data['profile'] = this.profile!.toJson();
     }
     return data;
   }
 }
 
-class Profiles {
+class Profile {
   String? sId;
   String? email;
   int? iV;
@@ -34,7 +30,7 @@ class Profiles {
   String? mobile;
   String? name;
 
-  Profiles(
+  Profile(
       {this.sId,
       this.email,
       this.iV,
@@ -44,7 +40,7 @@ class Profiles {
       this.mobile,
       this.name});
 
-  Profiles.fromJson(Map<String, dynamic> json) {
+  Profile.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];
     email = json['email'];
     iV = json['__v'];

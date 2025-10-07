@@ -1,8 +1,11 @@
-import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io';
+import 'package:brand/route/routes.dart';
+import 'package:brand/view_model/Repository/CompanyRepository/comFormRepository.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:convert'; // Required for JSON encoding/decoding
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'package:brand/generate/companySideModels/comFormModel.dart';
 
 class CompanyFormController extends ChangeNotifier {
   final TextEditingController nameController = TextEditingController();
@@ -15,86 +18,24 @@ class CompanyFormController extends ChangeNotifier {
   final ImagePicker _picker = ImagePicker();
 
   File? get selectedImage => _selectedImage;
+
   bool _isFormSubmitted = false;
   bool get isFormSubmitted => _isFormSubmitted;
 
-  List<Map<String, String>> allBrands = [];
-  List<Map<String, String>> _filteredBrands = [];
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
 
   CompanyFormController() {
-    _filteredBrands = List.from(allBrands);
+    _loadFormStatus(); // 🔹 Jab controller banega, saved status load ho jayega
   }
 
-  List<Map<String, String>> get filteredBrands => _filteredBrands;
-  int get registeredCompanyCount => _filteredBrands.length;
-
-  void filterBrands(String query) {
-    if (query.isEmpty) {
-      _filteredBrands = allBrands;
-    } else {
-      _filteredBrands = allBrands
-          .where((brand) =>
-              brand["name"]!.toLowerCase().contains(query.toLowerCase()))
-          .toList();
-    }
-    notifyListeners(); // Notify the UI to rebuild
-  }
-
-  Future<void> saveProfileData() async {
+  Future<void> _loadFormStatus() async {
     final prefs = await SharedPreferences.getInstance();
-
-    Map<String, String> newBrand = {
-      "name": nameController.text.trim(),
-      "image": _selectedImage?.path ?? "",
-    };
-
-    List<String> existingBrands = prefs.getStringList('registeredBrands') ?? [];
-
-    existingBrands.add(jsonEncode(newBrand));
-    await prefs.setStringList('registeredBrands', existingBrands);
-
-    await prefs.setString('comProfileName', nameController.text);
-    await prefs.setString('comProfileAddress', addressController.text);
-    await prefs.setString('comProfileEmail', emailController.text);
-    await prefs.setString('comProfileContact', contactController.text);
-
-    if (_selectedImage != null) {
-      await prefs.setString('comProfileImage', _selectedImage!.path);
-    }
-
-    await prefs.setBool('isFormSubmitted', true);
-
-    await loadRegisteredBrands();
+    _isFormSubmitted = prefs.getBool('formSubmitted') ?? false;
     notifyListeners();
   }
 
-  Future<void> loadRegisteredBrands() async {
-    final prefs = await SharedPreferences.getInstance();
-    List<String> storedBrands = prefs.getStringList('registeredBrands') ?? [];
-    print("🔍 Stored Brands: $storedBrands");
-    _filteredBrands = storedBrands
-        .map((brand) => Map<String, String>.from(jsonDecode(brand)))
-        .toList();
-
-    _filteredBrands = List.from(allBrands);
-    notifyListeners();
-  }
-
-  Future<void> loadProfileData() async {
-    final prefs = await SharedPreferences.getInstance();
-    nameController.text = prefs.getString('companyName') ?? '';
-    addressController.text = prefs.getString('companyAddress') ?? '';
-    emailController.text = prefs.getString('companyEmail') ?? '';
-    contactController.text = prefs.getString('companyContact') ?? '';
-    descriptionController.text = prefs.getString('companyDescription') ?? '';
-
-    String? imagePath = prefs.getString('companyImage');
-    if (imagePath != null) {
-      _selectedImage = File(imagePath);
-      notifyListeners();
-    }
-  }
-
+  /// Pick image from gallery
   Future<void> pickImage() async {
     final XFile? pickedFile =
         await _picker.pickImage(source: ImageSource.gallery);
@@ -104,7 +45,29 @@ class CompanyFormController extends ChangeNotifier {
     }
   }
 
-  /// **Capture image using camera**
+  Future<void> logout(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+
+    // Preserve formSubmitted and form data
+    bool? isFormAlreadySubmitted = prefs.getBool('formSubmitted');
+
+    await prefs.clear(); // clear all
+
+    // Restore form data if needed
+    if (isFormAlreadySubmitted == true) {
+      await prefs.setBool('formSubmitted', true);
+      // optionally restore other form fields
+      // await prefs.setString(...);
+    }
+
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      RoutesName.comLogInScreen,
+      (route) => false,
+    );
+  }
+
+  /// Capture image from camera
   Future<void> captureImage() async {
     final XFile? pickedFile =
         await _picker.pickImage(source: ImageSource.camera);
@@ -114,15 +77,71 @@ class CompanyFormController extends ChangeNotifier {
     }
   }
 
-  /// **Clear the selected image**
+  /// Clear image
   void clearImage() {
     _selectedImage = null;
     notifyListeners();
   }
 
-  /// **Edit function for updating profile data**
-  Future<void> editProfileData() async {
-    await saveProfileData();
+  /// 🚀 Submit company form (API + Local save)
+  Future<CompFormModel?> registerCompanyForm(BuildContext context) async {
+    if (_selectedImage == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please select a company logo")),
+      );
+      return null;
+    }
+
+    _isLoading = true;
     notifyListeners();
+
+    try {
+      final response = await ComFormRepository.comForm(
+        name: nameController.text.trim(),
+        image: _selectedImage!,
+        email: emailController.text.trim(),
+        mobile: contactController.text.trim(),
+        address: addressController.text.trim(),
+        description: descriptionController.text.trim(),
+      );
+
+      _isLoading = false;
+      notifyListeners();
+
+      if (response.profile != null) {
+        // ✅ Success → Save locally
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('formSubmitted', true);
+        await prefs.setString('companyName', response.profile!.name ?? '');
+        await prefs.setString('companyId', response.profile!.sId ?? '');
+        await prefs.setString('companyEmail', response.profile!.email ?? '');
+        await prefs.setString(
+            'companyAddress', response.profile!.address ?? '');
+        await prefs.setString('companyContact', response.profile!.mobile ?? '');
+        await prefs.setString(
+            'companyDescription', response.profile!.description ?? '');
+        await prefs.setString('companyImage', response.profile!.image ?? '');
+
+        _isFormSubmitted = true;
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text("✅ Company profile submitted successfully")),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(response.message ?? "❌ Submission failed")),
+        );
+      }
+
+      return response;
+    } catch (e) {
+      _isLoading = false;
+      notifyListeners();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("❌ Error: $e")),
+      );
+      return null;
+    }
   }
 }

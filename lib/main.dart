@@ -1,5 +1,6 @@
 import 'package:brand/barrelView/barrelView.dart';
 import 'package:brand/views/screens/company/comLoginScreen.dart';
+import 'package:brand/views/screens/company/profileScreen/comFormScreen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -9,16 +10,28 @@ Future<void> main() async {
   String? userId = CacheHelper.getData(key: 'userId');
   bool? onBoarding = CacheHelper.getData(key: 'onBoarding');
 
+  // Company side ke liye SharedPreferences
+  final prefs = await SharedPreferences.getInstance();
+  bool isFormSubmitted = prefs.getBool('formSubmitted') ?? false;
+  String? companyId = prefs.getString('companyId');
+
   // Decide starting widget
   Widget startWidget;
   if (onBoarding != null) {
     if (userId != null && userId.isNotEmpty) {
-      startWidget = const Homescreen(); // already logged in
+      startWidget = const UserLoginscreen(); // ✅ user already logged in
+    } else if (companyId != null && companyId.isNotEmpty) {
+      // ✅ Company login
+      if (isFormSubmitted) {
+        startWidget = const UserLoginscreen(); // form done → direct home
+      } else {
+        startWidget = const UserLoginscreen(); // form not filled → form screen
+      }
     } else {
       startWidget = UserLoginscreen(); // login required
     }
   } else {
-    startWidget = Onboardscreen(); // pehli dafa open
+    startWidget = Onboardscreen(); // first time open
   }
 
   runApp(

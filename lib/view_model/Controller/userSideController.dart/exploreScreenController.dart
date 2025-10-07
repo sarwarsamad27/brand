@@ -7,7 +7,6 @@ class ExploreScreenController with ChangeNotifier {
   List<Profiles> _companies = []; // filtered list
   List<Profiles> get companies => _companies;
   List<Profiles> get filteredProfiles => _companies;
-
   TextEditingController searchController = TextEditingController();
   bool _isLoading = false;
   bool get isLoading => _isLoading;

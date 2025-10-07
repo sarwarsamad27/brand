@@ -1,13 +1,14 @@
+import 'dart:math';
+import 'package:flutter/material.dart';
 import 'package:brand/generate/userSideModel/searchProductModel.dart';
 import 'package:brand/view_model/Repository/UserRepository/searchProductRepository.dart';
-import 'package:flutter/material.dart';
 
 class SearchProductController with ChangeNotifier {
   bool isLoading = false;
   List<Products> allProducts = [];
   List<Products> filteredProducts = [];
 
-  /// Fetch all products
+  /// Fetch all products (call only once or on refresh)
   Future<void> fetchProducts() async {
     try {
       isLoading = true;
@@ -15,7 +16,7 @@ class SearchProductController with ChangeNotifier {
 
       final res = await SearchProductRepository.searchProductFetch();
       allProducts = res.products ?? [];
-      filteredProducts = allProducts;
+      filteredProducts = [...allProducts];
     } catch (e) {
       print("❌ Error in fetchProducts: $e");
     } finally {
@@ -27,7 +28,7 @@ class SearchProductController with ChangeNotifier {
   /// Filter by name
   void searchProduct(String query) {
     if (query.isEmpty) {
-      filteredProducts = allProducts;
+      filteredProducts = [...allProducts];
     } else {
       filteredProducts = allProducts
           .where((p) =>
@@ -39,6 +40,12 @@ class SearchProductController with ChangeNotifier {
                   .contains(query.toLowerCase()))
           .toList();
     }
+    notifyListeners();
+  }
+
+  /// Shuffle products
+  void shuffleProducts() {
+    filteredProducts.shuffle(Random());
     notifyListeners();
   }
 }

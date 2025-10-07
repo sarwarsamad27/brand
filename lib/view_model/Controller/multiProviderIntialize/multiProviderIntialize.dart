@@ -1,6 +1,7 @@
 import 'package:brand/resources/global.dart';
 import 'package:brand/view_model/Controller/companySideController/comEntryProductShowController.dart';
 import 'package:brand/view_model/Controller/companySideController/comOrderController.dart';
+import 'package:brand/view_model/Controller/companySideController/comProfileController.dart';
 import 'package:brand/view_model/Controller/companySideController/comloginController.dart';
 import 'package:brand/view_model/Controller/companySideController/compFormController.dart';
 import 'package:brand/view_model/Controller/companySideController/comproductDetailController.dart';
@@ -8,6 +9,7 @@ import 'package:brand/view_model/Controller/loginController/signInCompanyControl
 import 'package:brand/view_model/Controller/userSideController.dart/exploreScreenController.dart';
 import 'package:brand/view_model/Controller/userSideController.dart/favouriteProductController.dart';
 import 'package:brand/view_model/Controller/userSideController.dart/homeScreenController.dart';
+import 'package:brand/view_model/Controller/userSideController.dart/myOrderController.dart';
 import 'package:brand/view_model/Controller/userSideController.dart/productDetailController.dart';
 import 'package:brand/view_model/Controller/userSideController.dart/productEntryController.dart';
 import 'package:brand/view_model/Controller/userSideController.dart/productShowController.dart';
@@ -29,7 +31,7 @@ class InitializeProvider {
     ChangeNotifierProvider(create: (_) => HomescreenController()),
     ChangeNotifierProvider(create: (_) => Onboardcontroller()),
     ChangeNotifierProvider(create: (_) => ThemeManager()),
-    ChangeNotifierProvider(create: (_) => OrderController()),
+    ChangeNotifierProvider(create: (_) => CreateOrderController()),
     ChangeNotifierProvider(create: (_) => ProductEntryController()),
     ChangeNotifierProvider(create: (_) => DashboardController()),
     ChangeNotifierProvider(
@@ -46,8 +48,9 @@ class InitializeProvider {
     ChangeNotifierProvider(create: (_) => ProductDetailController()),
     ChangeNotifierProvider(create: (_) => ProductShowController()),
     ChangeNotifierProvider(create: (_) => ComEntryProductShowController()),
-    ChangeNotifierProvider(create: (_) => ComProductEntryController()),
     ChangeNotifierProvider(create: (_) => FavouriteController()),
     ChangeNotifierProvider(create: (_) => SearchProductController()),
+    ChangeNotifierProvider(create: (_) => MyOrdersController()),
+    ChangeNotifierProvider(create: (_) => ComProfileController()),
   ];
 }

@@ -3,7 +3,7 @@ import 'package:brand/network/base_api_services.dart';
 import 'package:brand/network/network_api_services.dart';
 import 'package:brand/resources/global.dart';
 
-class ComLoginRepository {
+class ComSignUpRepository {
   static BaseApiServices apiService = NetworkApiServices();
   static var apiurl = Global.CompRegister;
 
@@ -19,7 +19,7 @@ class ComLoginRepository {
       print('📌 Final Response Map: $res');
       return ComRegisterModel.fromJson(res);
     } catch (e) {
-      print("❌ Error in LoginRepository: $e");
+      print("❌ Error in ComSignUpRepository: $e");
       return ComRegisterModel(message: "Error occurred: $e");
     }
   }

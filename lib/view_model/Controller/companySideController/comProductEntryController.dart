@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:brand/generate/companySideModels/comFormModel.dart';
 import 'package:brand/resources/global.dart';
 import 'package:brand/view_model/Repository/CompanyRepository/comProductEntryRepository.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,8 @@ import 'package:brand/generate/companySideModels/comProductEntryModel.dart';
 
 class ComProductEntryController with ChangeNotifier {
   final TextEditingController nameController = TextEditingController();
+  CompFormModel? profileModel;
+
   File? _pickedImage;
   File? get pickedImage => _pickedImage;
 
@@ -53,9 +56,9 @@ class ComProductEntryController with ChangeNotifier {
       final result = await ComProductEntryRepository.addProduct(
         name: nameController.text.trim(),
         image: _pickedImage!,
-        userId: Global.loggedInCompanyId ?? '',
+        userId: profileModel!.profile!.sId ?? "",
       );
-
+      print('itssscndjcds' + (profileModel!.profile!.sId ?? ""));
       if (result.product != null) {
         productResponse = result;
         ScaffoldMessenger.of(context).showSnackBar(

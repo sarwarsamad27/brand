@@ -2,7 +2,6 @@ import 'package:brand/barrelView/barrelView.dart';
 import 'package:brand/utiles/appHelpers.dart';
 import 'package:brand/view_model/Controller/companySideController/comproductDetailController.dart';
 import 'package:brand/views/screens/user/navBarItems/explore/products/orderFormSelectedprod.dart';
-import 'package:provider/provider.dart'; // Ensure Provider is properly imported
 
 class SelectedProductScreen extends StatelessWidget {
   final CompanyProducts product;
@@ -134,11 +133,11 @@ class SelectedProductScreen extends StatelessWidget {
                 CustomButton(
                   width: width * .3,
                   onTap: () {
-                    final selectedProducts = [product];
-                    AppHelpers.showFullBottomSheet(
-                      context,
-                      OrderFormSelectedProd(selectedProducts: selectedProducts),
-                    );
+                    // final selectedProducts = [product];
+                    // AppHelpers.showFullBottomSheet(
+                    //   context
+                    //   // OrderCreateScreen(selectedProducts: selectedProducts),
+                    // );
                   },
                   child: const Text('Buy Now'),
                 ),

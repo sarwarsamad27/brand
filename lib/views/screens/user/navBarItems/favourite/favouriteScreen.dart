@@ -235,7 +235,33 @@ class FavouriteScreen extends StatelessWidget {
                                 ),
                               ),
                               onPressed: () {
-                                // TODO: Checkout Page
+                                final selectedProducts = favController
+                                    .favourites
+                                    .map((fav) => {
+                                          "id": fav.product?.sId ?? "",
+                                          "name":
+                                              fav.product?.productName ?? "",
+                                          "description":
+                                              fav.product?.productDescription ??
+                                                  "",
+                                          "image":
+                                              fav.product?.images?.isNotEmpty ==
+                                                      true
+                                                  ? fav.product!.images!.first
+                                                  : "",
+                                          "quantity": fav.quantity,
+                                          "price": fav.product?.price ?? 0,
+                                        })
+                                    .toList();
+
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        FavouriteOrderFormScreen(
+                                            selectedProducts: selectedProducts),
+                                  ),
+                                );
                               },
                               child: const Text(
                                 "Proceed with these products",
